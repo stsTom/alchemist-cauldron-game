@@ -1,5 +1,5 @@
-type Difficulty = 'easy' | 'medium' | 'hard'; // Level 2+
-type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
+export type Difficulty = 'easy' | 'medium' | 'hard'; // Level 2+
+export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
 
 export interface IIngredient {
   id: string;
