@@ -1,5 +1,6 @@
 export type Difficulty = 'easy' | 'medium' | 'hard'; // Level 2+
 export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
+export type GameOverReason = 'time-up' | 'no-lives' | 'out-of-ingredients';
 
 export interface IIngredient {
   id: string;
@@ -27,8 +28,9 @@ export interface IRecipe {
 export interface IGameState {
   status: GameStatus;
   score: number;
-  timeLeft: number;
+  timeLeft: number; // ms
   lives: number;
+  gameOverReason?: GameOverReason | null;
   activeRecipe: IRecipe;
   cauldronIngredients: IIngredient[];
   shelfStock: Record<string, number>; // ingredient id -> portions left

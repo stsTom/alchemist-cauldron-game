@@ -1,6 +1,6 @@
 import { createStore } from '../shared/store';
 import type { IGameState } from '../shared/types';
-import { CHOSEN_DIFFICULTY, MAX_LIVES } from '../shared/constants';
+import { CHOSEN_DIFFICULTY, MAX_LIVES, STARTING_TIME } from '../shared/constants';
 import { getRandomRecipe } from '../logic/recipe-generator';
 
 export function createGameState(initial: IGameState) {
@@ -10,8 +10,9 @@ export function createGameState(initial: IGameState) {
 export const gameState = createGameState({
   status: 'playing',
   score: 0,
-  timeLeft: 0,
+  timeLeft: STARTING_TIME,
   lives: MAX_LIVES,
+  gameOverReason: null,
   activeRecipe: getRandomRecipe(),
   cauldronIngredients: [],
   shelfStock: {},

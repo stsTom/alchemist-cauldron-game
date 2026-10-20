@@ -2,7 +2,14 @@ import type { IGameState } from './shared/types';
 import { gameState } from './state/game-state';
 import { startGame } from './logic/brew-check';
 import { renderShelf, shelfSection } from './ui/shelf';
-import { healthUi, measurementsSection, renderHealth, renderMeasurements } from './ui/bars';
+import {
+  healthUi,
+  measurementsSection,
+  renderHealth,
+  renderMeasurements,
+  renderTimer,
+  timerUi,
+} from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
 import { renderStatus, statusUi } from './ui/dialogs';
 
@@ -12,6 +19,7 @@ const recipeSeciton = document.createElement('section');
 recipeSeciton.classList.add('recipeSeciton');
 
 function render(state: IGameState) {
+  renderTimer(state);
   renderShelf(state);
   renderMeasurements(state);
   renderCauldron(state);
@@ -25,6 +33,7 @@ render(gameState.get());
 
 if (gamePage) {
   gamePage.replaceChildren(
+    timerUi,
     shelfSection,
     recipeSeciton,
     measurementsSection,
