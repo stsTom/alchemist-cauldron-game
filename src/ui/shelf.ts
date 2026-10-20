@@ -4,7 +4,13 @@ import { addToCauldron, getIngredientById } from '../logic/calculate-cauldron';
 export const shelfSection = document.createElement('section');
 shelfSection.classList.add('shelf');
 
+let renderedStock: IGameState['shelfStock'] | null = null;
+
 export function renderShelf({ shelfStock }: IGameState) {
+  // Rebuilding on every timer tick replaces buttons mid-click and swallows clicks
+  if (shelfStock === renderedStock) return;
+  renderedStock = shelfStock;
+
   const buttons = Object.entries(shelfStock).map(([id, stock]) => {
     const ingredient = getIngredientById(id);
     const ingredientUi = document.createElement('button');
