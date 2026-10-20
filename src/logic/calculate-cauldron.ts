@@ -1,0 +1,39 @@
+import type { IIngredient } from '../shared/types';
+import INGREDIENTS from '../data/ingredients.json';
+import { MAX_CAULDRON_INGREDIENTS } from '../shared/constants';
+import { gameState } from '../state/game-state';
+
+export interface IMeasurements {
+  temperature: number;
+  density: number;
+  magicPower: number;
+}
+
+export function getIngredientById(id: string) {
+  return (INGREDIENTS as IIngredient[]).find((ingredient) => ingredient.id === id);
+}
+
+export function getMeasurements(cauldronIngredients: IIngredient[]): IMeasurements {
+  return cauldronIngredients.reduce(
+    (total, ingredient) => ({
+      temperature: total.temperature + ingredient.temperature,
+      density: total.density + ingredient.density,
+      magicPower: total.magicPower + ingredient.magicPower,
+    }),
+    { temperature: 0, density: 0, magicPower: 0 },
+  );
+}
+
+export function addToCauldron(ingredientId: string) {
+  const { shelfStock, cauldronIngredients } = gameState.get();
+  const ingredient = getIngredientById(ingredientId);
+  const stock = shelfStock[ingredientId] ?? 0;
+
+  if (!ingredient || stock <= 0) return;
+  if (cauldronIngredients.length >= MAX_CAULDRON_INGREDIENTS) return;
+
+  gameState.set({
+    shelfStock: { ...shelfStock, [ingredientId]: stock - 1 },
+    cauldronIngredients: [...cauldronIngredients, ingredient],
+  });
+}
