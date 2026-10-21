@@ -16,7 +16,7 @@ export function resetRound() {
 
 export function brew() {
   const { status, activeRecipe, cauldronIngredients, shelfStock } = gameState.get();
-  if (status !== 'playing' || !activeRecipe) return;
+  if (status !== 'playing' || !activeRecipe || cauldronIngredients.length === 0) return;
 
   const { temperature, density, magicPower } = getMeasurements(cauldronIngredients);
 
