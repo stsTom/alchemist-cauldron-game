@@ -1,10 +1,10 @@
 import type { IRecipeRange } from '../shared/types';
 import { MAX_LIVES, STARTING_TIME } from '../shared/constants';
-import { gameState } from '../state/game-state';
+import { createMenuState, gameState } from '../state/game-state';
 import { getMeasurements } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
-import { addTimeBonus, endGame, startTimer } from './timer';
+import { addTimeBonus, endGame, startTimer, stopTimer } from './timer';
 
 function isInRange(value: number, { min, max }: IRecipeRange) {
   return value >= min && value <= max;
@@ -55,4 +55,9 @@ export function startGame() {
   resetRound();
   populateShelf();
   startTimer();
+}
+
+export function goToMenu() {
+  stopTimer();
+  gameState.set(createMenuState());
 }
