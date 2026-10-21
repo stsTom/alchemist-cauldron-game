@@ -1,6 +1,7 @@
 import type { IGameState } from '../shared/types';
 import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { formatTime, pauseGame } from '../logic/timer';
+import { LOW_TIME_THRESHOLD } from '../shared/constants';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
@@ -34,8 +35,9 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
 export const timerUi = document.createElement('div');
 timerUi.classList.add('timer');
 
-export function renderTimer({ timeLeft }: IGameState) {
+export function renderTimer({ status, timeLeft }: IGameState) {
   timerUi.textContent = formatTime(timeLeft);
+  timerUi.classList.toggle('low-time', status === 'playing' && timeLeft < LOW_TIME_THRESHOLD);
 }
 
 export const scoreUi = document.createElement('div');

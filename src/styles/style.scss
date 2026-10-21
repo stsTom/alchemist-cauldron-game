@@ -21,6 +21,17 @@
   box-shadow: 0 0 8px 2px rgb(76 175 80 / 0.7);
 }
 
+.timer.low-time {
+  color: #d32f2f;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
 .cauldron.full {
   color: #e65100;
 }
