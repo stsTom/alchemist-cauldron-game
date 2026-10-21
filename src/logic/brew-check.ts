@@ -14,6 +14,10 @@ export function resetRound() {
   gameState.set({ activeRecipe: getRandomRecipe(), cauldronIngredients: [] });
 }
 
+export function clearCauldron() {
+  gameState.set({ cauldronIngredients: [] });
+}
+
 export function brew() {
   const { status, activeRecipe, cauldronIngredients, shelfStock } = gameState.get();
   if (status !== 'playing' || !activeRecipe || cauldronIngredients.length === 0) return;
@@ -39,7 +43,8 @@ export function brew() {
   const isShelfEmpty = Object.values(shelfStock).every((stock) => stock <= 0);
 
   if (lives > 0 && !isShelfEmpty) {
-    resetRound();
+    if (isSuccess) resetRound();
+    else clearCauldron();
     return;
   }
 
