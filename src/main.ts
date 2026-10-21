@@ -10,7 +10,9 @@ import {
   renderHealth,
   renderMeasurements,
   renderPauseButton,
+  renderScore,
   renderTimer,
+  scoreUi,
   timerUi,
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
@@ -26,6 +28,7 @@ const playField = document.createElement('div');
 playField.classList.add('play-field');
 playField.append(
   timerUi,
+  scoreUi,
   shelfSection,
   recipeSeciton,
   measurementsSection,
@@ -43,6 +46,7 @@ function renderPlayField({ status }: IGameState) {
 
 function render(state: IGameState) {
   renderTimer(state);
+  renderScore(state);
   renderPauseButton(state);
   renderShelf(state);
   renderMeasurements(state);

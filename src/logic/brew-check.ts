@@ -1,5 +1,5 @@
 import type { IRecipeRange } from '../shared/types';
-import { MAX_LIVES, STARTING_TIME } from '../shared/constants';
+import { MAX_LIVES, SCORE_PER_BREW, STARTING_TIME } from '../shared/constants';
 import { createMenuState, gameState } from '../state/game-state';
 import { getMeasurements } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
@@ -25,9 +25,11 @@ export function brew() {
     isInRange(density, activeRecipe.density) &&
     isInRange(magicPower, activeRecipe.magicPower);
 
-  let { lives } = gameState.get();
+  let { lives, score } = gameState.get();
 
   if (isSuccess) {
+    score += SCORE_PER_BREW;
+    gameState.set({ score });
     addTimeBonus();
   } else {
     lives -= 1;

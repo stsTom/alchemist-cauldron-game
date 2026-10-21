@@ -1,5 +1,4 @@
 import type { IGameState } from '../shared/types';
-import { MAX_LIVES } from '../shared/constants';
 import { getMeasurements } from '../logic/calculate-cauldron';
 import { formatTime, pauseGame } from '../logic/timer';
 
@@ -34,13 +33,19 @@ export function renderTimer({ timeLeft }: IGameState) {
   timerUi.textContent = formatTime(timeLeft);
 }
 
+export const scoreUi = document.createElement('div');
+scoreUi.classList.add('score');
+
+export function renderScore({ score }: IGameState) {
+  scoreUi.textContent = `Score: ${score}`;
+}
+
 export const pauseButton = document.createElement('button');
 pauseButton.classList.add('pause-button');
 pauseButton.textContent = 'Pause';
 pauseButton.addEventListener('click', pauseGame);
 
 export function renderPauseButton({ status }: IGameState) {
-  // While paused, the pause dialog offers Resume instead
   pauseButton.hidden = status !== 'playing';
 }
 
@@ -48,5 +53,5 @@ export const healthUi = document.createElement('div');
 healthUi.classList.add('health');
 
 export function renderHealth({ lives }: IGameState) {
-  healthUi.textContent = `Lives: ${lives} / ${MAX_LIVES}`;
+  healthUi.textContent = '❤'.repeat(lives);
 }
