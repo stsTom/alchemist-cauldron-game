@@ -31,7 +31,7 @@ export interface IGameState {
   timeLeft: number; // ms
   lives: number;
   gameOverReason?: GameOverReason | null;
-  activeRecipe: IRecipe;
+  activeRecipe: IRecipe | null; // null on the start screen
   cauldronIngredients: IIngredient[];
   shelfStock: Record<string, number>; // ingredient id -> portions left
   difficulty?: Difficulty; // Level 2+

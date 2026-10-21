@@ -1,6 +1,6 @@
 import type { GameOverReason, IGameState } from '../shared/types';
 import { resumeGame } from '../logic/timer';
-import { startGame } from '../logic/brew-check';
+import { goToMenu, startGame } from '../logic/brew-check';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -36,7 +36,12 @@ export const statusUi = gameOverDialog.root;
 const gameOverReason = document.createElement('p');
 const gameOverScore = document.createElement('p');
 
-gameOverDialog.body.append(gameOverReason, gameOverScore);
+gameOverDialog.body.append(
+  gameOverReason,
+  gameOverScore,
+  createDialogButton('Play Again', startGame),
+  createDialogButton('Main Menu', goToMenu),
+);
 
 export function renderStatus({ status, gameOverReason: reason, score }: IGameState) {
   statusUi.hidden = status !== 'game-over';
@@ -49,10 +54,9 @@ export function renderStatus({ status, gameOverReason: reason, score }: IGameSta
 const pauseDialog = createDialog('pause', 'Paused');
 export const pauseUi = pauseDialog.root;
 
-// No menu screen yet, so exiting starts a fresh game
 pauseDialog.body.append(
   createDialogButton('Resume', resumeGame),
-  createDialogButton('Exit to Menu', startGame),
+  createDialogButton('Exit to Menu', goToMenu),
 );
 
 export function renderPauseDialog({ status }: IGameState) {

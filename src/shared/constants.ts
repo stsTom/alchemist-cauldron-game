@@ -8,5 +8,6 @@ export const SHELF_VOLUME = DIFFICULTY_SETTINGS['ingredients-on-shelf'][CHOSEN_D
 export const MAX_CAULDRON_INGREDIENTS =
   DIFFICULTY_SETTINGS['max-ingredients-in-cauldron'][CHOSEN_DIFFICULTY];
 export const STARTING_TIME = DIFFICULTY_SETTINGS['starting-time'][CHOSEN_DIFFICULTY] * 1000; // ms
+export const SCORE_PER_BREW = DIFFICULTY_SETTINGS['score-per-brew'][CHOSEN_DIFFICULTY];
 export const TIME_BONUS = DIFFICULTY_SETTINGS['time-bonus-per-brew'][CHOSEN_DIFFICULTY] * 1000; // ms
 export const { min: MIN_STOCK, max: MAX_STOCK }: IRecipeRange = { min: 2, max: 15 };
