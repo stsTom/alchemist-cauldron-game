@@ -1,6 +1,6 @@
 import type { GameOverReason, IGameState } from '../shared/types';
 import { resumeGame } from '../logic/timer';
-import { goToMenu } from '../logic/brew-check';
+import { goToMenu, startGame } from '../logic/brew-check';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -39,6 +39,7 @@ const gameOverScore = document.createElement('p');
 gameOverDialog.body.append(
   gameOverReason,
   gameOverScore,
+  createDialogButton('Play Again', startGame),
   createDialogButton('Main Menu', goToMenu),
 );
 
