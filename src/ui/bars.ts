@@ -1,6 +1,7 @@
 import type { IGameState } from '../shared/types';
 import { MAX_LIVES } from '../shared/constants';
 import { getMeasurements } from '../logic/calculate-cauldron';
+import { formatTime, pauseGame } from '../logic/timer';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
@@ -17,6 +18,23 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
   temperatureUi.textContent = `min: ${temperature.min}; max: ${temperature.max}; current: ${measurements.temperature}`;
   densityUi.textContent = `min: ${density.min}; max: ${density.max}; current: ${measurements.density}`;
   magicPowerUi.textContent = `min: ${magicPower.min}; max: ${magicPower.max}; current: ${measurements.magicPower}`;
+}
+
+export const timerUi = document.createElement('div');
+timerUi.classList.add('timer');
+
+export function renderTimer({ timeLeft }: IGameState) {
+  timerUi.textContent = formatTime(timeLeft);
+}
+
+export const pauseButton = document.createElement('button');
+pauseButton.classList.add('pause-button');
+pauseButton.textContent = 'Pause';
+pauseButton.addEventListener('click', pauseGame);
+
+export function renderPauseButton({ status }: IGameState) {
+  // While paused, the pause dialog offers Resume instead
+  pauseButton.hidden = status !== 'playing';
 }
 
 export const healthUi = document.createElement('div');

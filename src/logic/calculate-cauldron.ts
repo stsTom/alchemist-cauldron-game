@@ -25,7 +25,9 @@ export function getMeasurements(cauldronIngredients: IIngredient[]): IMeasuremen
 }
 
 export function addToCauldron(ingredientId: string) {
-  const { shelfStock, cauldronIngredients } = gameState.get();
+  const { status, shelfStock, cauldronIngredients } = gameState.get();
+  if (status !== 'playing') return;
+
   const ingredient = getIngredientById(ingredientId);
   const stock = shelfStock[ingredientId] ?? 0;
 

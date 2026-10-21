@@ -1,8 +1,10 @@
 import type { IRecipeRange } from '../shared/types';
+import { MAX_LIVES, STARTING_TIME } from '../shared/constants';
 import { gameState } from '../state/game-state';
 import { getMeasurements } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
+import { addTimeBonus, endGame, startTimer } from './timer';
 
 function isInRange(value: number, { min, max }: IRecipeRange) {
   return value >= min && value <= max;
@@ -13,7 +15,9 @@ export function resetRound() {
 }
 
 export function brew() {
-  const { activeRecipe, cauldronIngredients, shelfStock } = gameState.get();
+  const { status, activeRecipe, cauldronIngredients, shelfStock } = gameState.get();
+  if (status !== 'playing') return;
+
   const { temperature, density, magicPower } = getMeasurements(cauldronIngredients);
 
   const isSuccess =
@@ -23,7 +27,9 @@ export function brew() {
 
   let { lives } = gameState.get();
 
-  if (!isSuccess) {
+  if (isSuccess) {
+    addTimeBonus();
+  } else {
     lives -= 1;
     gameState.set({ lives });
   }
@@ -35,10 +41,17 @@ export function brew() {
     return;
   }
 
-  gameState.set({ status: 'game-over' });
+  endGame(lives <= 0 ? 'no-lives' : 'out-of-ingredients');
 }
 
 export function startGame() {
+  gameState.set({
+    status: 'playing',
+    lives: MAX_LIVES,
+    timeLeft: STARTING_TIME,
+    gameOverReason: null,
+  });
   resetRound();
   populateShelf();
+  startTimer();
 }

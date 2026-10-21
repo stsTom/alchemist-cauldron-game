@@ -1,0 +1,32 @@
+#app {
+  position: relative;
+}
+
+.play-field.paused {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgb(0 0 0 / 0.4);
+  color: #fff;
+}
+
+.dialog[hidden] {
+  display: none;
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}

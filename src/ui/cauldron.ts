@@ -15,5 +15,5 @@ brewButton.textContent = 'Brew';
 brewButton.addEventListener('click', brew);
 
 export function renderBrewButton({ status }: IGameState) {
-  brewButton.disabled = status === 'game-over';
+  brewButton.disabled = status !== 'playing';
 }

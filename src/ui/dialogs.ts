@@ -1,13 +1,60 @@
-import type { IGameState } from '../shared/types';
+import type { GameOverReason, IGameState } from '../shared/types';
+import { resumeGame } from '../logic/timer';
+import { startGame } from '../logic/brew-check';
 
-export const statusUi = document.createElement('div');
-statusUi.classList.add('status');
+const REASON_TEXT: Record<GameOverReason, string> = {
+  'time-up': 'Time is up',
+  'no-lives': 'No lives left',
+  'out-of-ingredients': 'Out of ingredients',
+};
 
-export function renderStatus({ status, lives }: IGameState) {
-  if (status !== 'game-over') {
-    statusUi.textContent = '';
-    return;
-  }
+function createDialog(className: string, title: string) {
+  const root = document.createElement('section');
+  root.classList.add('dialog', className);
+  root.hidden = true;
 
-  statusUi.textContent = lives > 0 ? 'Out of ingredients. Game over' : 'No lives left. Game over';
+  const heading = document.createElement('h2');
+  heading.textContent = title;
+
+  const body = document.createElement('div');
+  body.classList.add('dialog-body');
+
+  root.append(heading, body);
+  return { root, body };
+}
+
+function createDialogButton(label: string, onClick: () => void) {
+  const button = document.createElement('button');
+  button.textContent = label;
+  button.addEventListener('click', onClick);
+  return button;
+}
+
+const gameOverDialog = createDialog('game-over', 'Game over');
+export const statusUi = gameOverDialog.root;
+
+const gameOverReason = document.createElement('p');
+const gameOverScore = document.createElement('p');
+
+gameOverDialog.body.append(gameOverReason, gameOverScore);
+
+export function renderStatus({ status, gameOverReason: reason, score }: IGameState) {
+  statusUi.hidden = status !== 'game-over';
+  if (statusUi.hidden) return;
+
+  gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
+  gameOverScore.textContent = `Score: ${score}`;
+}
+
+const pauseDialog = createDialog('pause', 'Paused');
+export const pauseUi = pauseDialog.root;
+
+// No menu screen yet, so exiting starts a fresh game
+pauseDialog.body.append(
+  createDialogButton('Resume', resumeGame),
+  createDialogButton('Exit to Menu', startGame),
+);
+
+export function renderPauseDialog({ status }: IGameState) {
+  pauseUi.hidden = status !== 'paused';
 }
