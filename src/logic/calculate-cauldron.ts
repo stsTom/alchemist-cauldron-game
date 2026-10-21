@@ -1,4 +1,4 @@
-import type { IIngredient } from '../shared/types';
+import type { IIngredient, IRecipeRange } from '../shared/types';
 import INGREDIENTS from '../data/ingredients.json';
 import { MAX_CAULDRON_INGREDIENTS } from '../shared/constants';
 import { gameState } from '../state/game-state';
@@ -7,6 +7,10 @@ export interface IMeasurements {
   temperature: number;
   density: number;
   magicPower: number;
+}
+
+export function isInRange(value: number, { min, max }: IRecipeRange) {
+  return value >= min && value <= max;
 }
 
 export function getIngredientById(id: string) {

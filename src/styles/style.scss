@@ -8,6 +8,19 @@
   user-select: none;
 }
 
+.measurements-section > div {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition:
+    color 0.2s,
+    box-shadow 0.2s;
+}
+
+.measurements-section > .in-range {
+  color: #2e7d32;
+  box-shadow: 0 0 8px 2px rgb(76 175 80 / 0.7);
+}
+
 .dialog {
   position: fixed;
   inset: 0;

@@ -1,5 +1,5 @@
 import type { IGameState } from '../shared/types';
-import { getMeasurements } from '../logic/calculate-cauldron';
+import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { formatTime, pauseGame } from '../logic/timer';
 
 export const measurementsSection = document.createElement('section');
@@ -15,11 +15,16 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
     temperatureUi.textContent = '';
     densityUi.textContent = '';
     magicPowerUi.textContent = '';
+    [temperatureUi, densityUi, magicPowerUi].forEach((ui) => ui.classList.remove('in-range'));
     return;
   }
 
   const { temperature, density, magicPower } = activeRecipe;
   const measurements = getMeasurements(cauldronIngredients);
+
+  temperatureUi.classList.toggle('in-range', isInRange(measurements.temperature, temperature));
+  densityUi.classList.toggle('in-range', isInRange(measurements.density, density));
+  magicPowerUi.classList.toggle('in-range', isInRange(measurements.magicPower, magicPower));
 
   temperatureUi.textContent = `min: ${temperature.min}; max: ${temperature.max}; current: ${measurements.temperature}`;
   densityUi.textContent = `min: ${density.min}; max: ${density.max}; current: ${measurements.density}`;

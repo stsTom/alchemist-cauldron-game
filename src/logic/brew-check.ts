@@ -1,14 +1,9 @@
-import type { IRecipeRange } from '../shared/types';
 import { MAX_LIVES, SCORE_PER_BREW, STARTING_TIME } from '../shared/constants';
 import { createMenuState, gameState } from '../state/game-state';
-import { getMeasurements } from './calculate-cauldron';
+import { getMeasurements, isInRange } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
 import { addTimeBonus, endGame, startTimer, stopTimer } from './timer';
-
-function isInRange(value: number, { min, max }: IRecipeRange) {
-  return value >= min && value <= max;
-}
 
 export function resetRound() {
   gameState.set({ activeRecipe: getRandomRecipe(), cauldronIngredients: [] });
