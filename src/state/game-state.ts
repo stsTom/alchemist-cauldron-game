@@ -1,20 +1,24 @@
 import { createStore } from '../shared/store';
 import type { IGameState } from '../shared/types';
-import { CHOSEN_DIFFICULTY, MAX_LIVES, STARTING_TIME } from '../shared/constants';
-import { getRandomRecipe } from '../logic/recipe-generator';
+import { CHOSEN_DIFFICULTY } from '../shared/constants';
 
 export function createGameState(initial: IGameState) {
   return createStore<IGameState>(initial);
 }
 
-export const gameState = createGameState({
-  status: 'playing',
-  score: 0,
-  timeLeft: STARTING_TIME,
-  lives: MAX_LIVES,
-  gameOverReason: null,
-  activeRecipe: getRandomRecipe(),
-  cauldronIngredients: [],
-  shelfStock: {},
-  difficulty: CHOSEN_DIFFICULTY,
-});
+// Start screen: nothing on the shelf, in the cauldron or in the bars until the first run
+export function createMenuState(): IGameState {
+  return {
+    status: 'menu',
+    score: 0,
+    timeLeft: 0,
+    lives: 0,
+    gameOverReason: null,
+    activeRecipe: null,
+    cauldronIngredients: [],
+    shelfStock: {},
+    difficulty: CHOSEN_DIFFICULTY,
+  };
+}
+
+export const gameState = createGameState(createMenuState());

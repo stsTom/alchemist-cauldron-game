@@ -1,7 +1,6 @@
 import './styles/style.scss';
 import type { IGameState } from './shared/types';
 import { gameState } from './state/game-state';
-import { startGame } from './logic/brew-check';
 import { pauseGame } from './logic/timer';
 import { renderShelf, shelfSection } from './ui/shelf';
 import {
@@ -16,6 +15,7 @@ import {
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
 import { pauseUi, renderPauseDialog, renderStatus, statusUi } from './ui/dialogs';
+import { renderStartButton, startButton } from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -32,6 +32,7 @@ playField.append(
   cauldronUi,
   healthUi,
   brewButton,
+  startButton,
 );
 
 function renderPlayField({ status }: IGameState) {
@@ -48,6 +49,7 @@ function render(state: IGameState) {
   renderCauldron(state);
   renderHealth(state);
   renderBrewButton(state);
+  renderStartButton(state);
   renderPlayField(state);
   renderStatus(state);
   renderPauseDialog(state);
@@ -63,5 +65,3 @@ if (gamePage) {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) pauseGame();
 });
-
-startGame();

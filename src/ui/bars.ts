@@ -12,6 +12,13 @@ const magicPowerUi = document.createElement('div');
 measurementsSection.append(temperatureUi, densityUi, magicPowerUi);
 
 export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameState) {
+  if (!activeRecipe) {
+    temperatureUi.textContent = '';
+    densityUi.textContent = '';
+    magicPowerUi.textContent = '';
+    return;
+  }
+
   const { temperature, density, magicPower } = activeRecipe;
   const measurements = getMeasurements(cauldronIngredients);
 
