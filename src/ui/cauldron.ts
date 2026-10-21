@@ -7,6 +7,7 @@ cauldronUi.classList.add('cauldron');
 
 export function renderCauldron({ cauldronIngredients }: IGameState) {
   cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${MAX_CAULDRON_INGREDIENTS}`;
+  cauldronUi.classList.toggle('full', cauldronIngredients.length >= MAX_CAULDRON_INGREDIENTS);
 }
 
 export const brewButton = document.createElement('button');
