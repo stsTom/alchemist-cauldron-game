@@ -27,6 +27,26 @@ export function endGame(reason: GameOverReason) {
   gameState.set({ status: 'game-over', gameOverReason: reason });
 }
 
+export function pauseGame() {
+  if (gameState.get().status !== 'playing') return;
+  stopTimer();
+  gameState.set({ status: 'paused' });
+}
+
+export function resumeGame() {
+  if (gameState.get().status !== 'paused') return;
+  gameState.set({ status: 'playing' });
+  startTimer();
+}
+
+export function togglePause() {
+  if (gameState.get().status === 'paused') {
+    resumeGame();
+  } else {
+    pauseGame();
+  }
+}
+
 function updateTimer() {
   const timeLeft = Math.max(0, endTime - Date.now());
   gameState.set({ timeLeft });

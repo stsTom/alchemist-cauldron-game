@@ -1,7 +1,7 @@
 import type { IGameState } from '../shared/types';
 import { MAX_LIVES } from '../shared/constants';
 import { getMeasurements } from '../logic/calculate-cauldron';
-import { formatTime } from '../logic/timer';
+import { formatTime, togglePause } from '../logic/timer';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
@@ -25,6 +25,15 @@ timerUi.classList.add('timer');
 
 export function renderTimer({ timeLeft }: IGameState) {
   timerUi.textContent = formatTime(timeLeft);
+}
+
+export const pauseButton = document.createElement('button');
+pauseButton.classList.add('pause-button');
+pauseButton.addEventListener('click', togglePause);
+
+export function renderPauseButton({ status }: IGameState) {
+  pauseButton.hidden = status !== 'playing' && status !== 'paused';
+  pauseButton.textContent = status === 'paused' ? 'Resume' : 'Pause';
 }
 
 export const healthUi = document.createElement('div');
