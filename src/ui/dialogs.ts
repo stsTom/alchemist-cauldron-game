@@ -1,12 +1,27 @@
-import type { GameOverReason, IGameState } from '../shared/types';
-import { resumeGame } from '../logic/timer';
+﻿import type { GameOverReason, IGameState } from '../shared/types';
+import { pauseGame, resumeGame } from '../logic/timer';
 import { goToMenu, startGame } from '../logic/brew-check';
+import { gameState } from '../state/game-state';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
   'no-lives': 'No lives left',
   'out-of-ingredients': 'Out of ingredients',
 };
+
+const RULES_TITLE = 'How the game works';
+
+const RULES_STEPS = [
+  'Start a game. The app picks one random recipe, and the recipe panel shows how many ingredients you may use, for example Ingredients: 0 / 4. When the run starts, the shelf is filled according to the chosen difficulty, the cauldron is still empty, and the score/time/lives switch from the start screen state to the active game state.',
+  'Add ingredients from the shelf to the cauldron. The counter grows with every ingredient (1 / 4, 2 / 4 …). At the maximum the shelf is blocked.',
+  'Watch the 3 bars: Temperature, Density and Magic Power.',
+  'Try to move every value into the recipe target zones.',
+  'Click Brew to check the mix. In Level 3, Pour Out is also available.',
+  'Keep brewing until time ends, you lose all lives, or the ingredients run out.',
+];
+
+const RULES_NOTE =
+  'Every ingredient has a limited stock. The number on the shelf card shows how many portions are left';
 
 function createDialog(className: string, title: string) {
   const root = document.createElement('section');
@@ -59,6 +74,52 @@ pauseDialog.body.append(
   createDialogButton('Exit to Menu', goToMenu),
 );
 
-export function renderPauseDialog({ status }: IGameState) {
-  pauseUi.hidden = status !== 'paused';
+export function renderPauseDialog({ status, isHelpOpen }: IGameState) {
+  pauseUi.hidden = status !== 'paused' || Boolean(isHelpOpen);
+}
+
+const helpDialog = createDialog('help', 'Game rules');
+export const helpUi = helpDialog.root;
+
+const rulesTitle = document.createElement('h3');
+rulesTitle.textContent = RULES_TITLE;
+
+const rulesList = document.createElement('ol');
+rulesList.append(
+  ...RULES_STEPS.map((step) => {
+    const item = document.createElement('li');
+    item.textContent = step;
+    return item;
+  }),
+);
+
+const rulesNote = document.createElement('p');
+rulesNote.textContent = RULES_NOTE;
+
+const helpContent = document.createElement('div');
+helpContent.classList.add('help-content');
+helpContent.append(rulesTitle, rulesList, rulesNote);
+
+let resumeOnHelpClose = false;
+
+function openHelp() {
+  resumeOnHelpClose = gameState.get().status === 'playing';
+  pauseGame();
+  gameState.set({ isHelpOpen: true });
+}
+
+function closeHelp() {
+  gameState.set({ isHelpOpen: false });
+  if (resumeOnHelpClose) resumeGame();
+}
+
+helpDialog.body.append(helpContent, createDialogButton('Close', closeHelp));
+
+export const helpButton = document.createElement('button');
+helpButton.classList.add('help-button');
+helpButton.textContent = 'Help';
+helpButton.addEventListener('click', openHelp);
+
+export function renderHelpDialog({ isHelpOpen }: IGameState) {
+  helpUi.hidden = !isHelpOpen;
 }

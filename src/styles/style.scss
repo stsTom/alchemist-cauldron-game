@@ -52,6 +52,12 @@
   display: none;
 }
 
+.help-content {
+  max-width: 40rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
 .dialog-body {
   display: flex;
   flex-direction: column;
