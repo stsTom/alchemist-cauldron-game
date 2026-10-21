@@ -1,6 +1,7 @@
 import type { IGameState } from '../shared/types';
-import { getMeasurements } from '../logic/calculate-cauldron';
+import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { formatTime, pauseGame } from '../logic/timer';
+import { LOW_TIME_THRESHOLD } from '../shared/constants';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
@@ -15,11 +16,16 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
     temperatureUi.textContent = '';
     densityUi.textContent = '';
     magicPowerUi.textContent = '';
+    [temperatureUi, densityUi, magicPowerUi].forEach((ui) => ui.classList.remove('in-range'));
     return;
   }
 
   const { temperature, density, magicPower } = activeRecipe;
   const measurements = getMeasurements(cauldronIngredients);
+
+  temperatureUi.classList.toggle('in-range', isInRange(measurements.temperature, temperature));
+  densityUi.classList.toggle('in-range', isInRange(measurements.density, density));
+  magicPowerUi.classList.toggle('in-range', isInRange(measurements.magicPower, magicPower));
 
   temperatureUi.textContent = `min: ${temperature.min}; max: ${temperature.max}; current: ${measurements.temperature}`;
   densityUi.textContent = `min: ${density.min}; max: ${density.max}; current: ${measurements.density}`;
@@ -29,8 +35,9 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
 export const timerUi = document.createElement('div');
 timerUi.classList.add('timer');
 
-export function renderTimer({ timeLeft }: IGameState) {
+export function renderTimer({ status, timeLeft }: IGameState) {
   timerUi.textContent = formatTime(timeLeft);
+  timerUi.classList.toggle('low-time', status === 'playing' && timeLeft < LOW_TIME_THRESHOLD);
 }
 
 export const scoreUi = document.createElement('div');

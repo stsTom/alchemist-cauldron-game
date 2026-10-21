@@ -16,7 +16,15 @@ import {
   timerUi,
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
-import { pauseUi, renderPauseDialog, renderStatus, statusUi } from './ui/dialogs';
+import {
+  helpButton,
+  helpUi,
+  pauseUi,
+  renderHelpDialog,
+  renderPauseDialog,
+  renderStatus,
+  statusUi,
+} from './ui/dialogs';
 import { renderStartButton, startButton } from './ui/menu';
 
 const gamePage = document.querySelector('main');
@@ -38,8 +46,8 @@ playField.append(
   startButton,
 );
 
-function renderPlayField({ status }: IGameState) {
-  const isPaused = status === 'paused';
+function renderPlayField({ status, isHelpOpen }: IGameState) {
+  const isPaused = status === 'paused' || Boolean(isHelpOpen);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
 }
@@ -57,13 +65,14 @@ function render(state: IGameState) {
   renderPlayField(state);
   renderStatus(state);
   renderPauseDialog(state);
+  renderHelpDialog(state);
 }
 
 gameState.subscribe(render);
 render(gameState.get());
 
 if (gamePage) {
-  gamePage.replaceChildren(pauseButton, playField, statusUi, pauseUi);
+  gamePage.replaceChildren(helpButton, pauseButton, playField, statusUi, pauseUi, helpUi);
 }
 
 document.addEventListener('visibilitychange', () => {

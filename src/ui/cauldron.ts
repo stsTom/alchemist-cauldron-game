@@ -7,6 +7,7 @@ cauldronUi.classList.add('cauldron');
 
 export function renderCauldron({ cauldronIngredients }: IGameState) {
   cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${MAX_CAULDRON_INGREDIENTS}`;
+  cauldronUi.classList.toggle('full', cauldronIngredients.length >= MAX_CAULDRON_INGREDIENTS);
 }
 
 export const brewButton = document.createElement('button');
@@ -14,7 +15,7 @@ brewButton.classList.add('brew-button');
 brewButton.textContent = 'Brew';
 brewButton.addEventListener('click', brew);
 
-export function renderBrewButton({ status }: IGameState) {
+export function renderBrewButton({ status, cauldronIngredients }: IGameState) {
   brewButton.hidden = status === 'menu';
-  brewButton.disabled = status !== 'playing';
+  brewButton.disabled = status !== 'playing' || cauldronIngredients.length === 0;
 }

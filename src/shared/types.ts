@@ -34,6 +34,7 @@ export interface IGameState {
   activeRecipe: IRecipe | null; // null on the start screen
   cauldronIngredients: IIngredient[];
   shelfStock: Record<string, number>; // ingredient id -> portions left
+  isHelpOpen?: boolean;
   difficulty?: Difficulty; // Level 2+
   lastReactionId?: string | null; // Level 3+
 }

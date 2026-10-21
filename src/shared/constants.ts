@@ -10,4 +10,6 @@ export const MAX_CAULDRON_INGREDIENTS =
 export const STARTING_TIME = DIFFICULTY_SETTINGS['starting-time'][CHOSEN_DIFFICULTY] * 1000; // ms
 export const SCORE_PER_BREW = DIFFICULTY_SETTINGS['score-per-brew'][CHOSEN_DIFFICULTY];
 export const TIME_BONUS = DIFFICULTY_SETTINGS['time-bonus-per-brew'][CHOSEN_DIFFICULTY] * 1000; // ms
+export const LOW_TIME_THRESHOLD = 15 * 1000; // ms
+export const RECIPE_TOLERANCE = DIFFICULTY_SETTINGS['recipe-tolerance'][CHOSEN_DIFFICULTY];
 export const { min: MIN_STOCK, max: MAX_STOCK }: IRecipeRange = { min: 2, max: 15 };
