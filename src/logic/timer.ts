@@ -39,14 +39,6 @@ export function resumeGame() {
   startTimer();
 }
 
-export function togglePause() {
-  if (gameState.get().status === 'paused') {
-    resumeGame();
-  } else {
-    pauseGame();
-  }
-}
-
 function updateTimer() {
   const timeLeft = Math.max(0, endTime - Date.now());
   gameState.set({ timeLeft });

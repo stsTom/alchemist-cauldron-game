@@ -1,8 +1,9 @@
+import './styles/style.scss';
 import type { IGameState } from './shared/types';
 import { gameState } from './state/game-state';
 import { startGame } from './logic/brew-check';
-import { renderShelf, shelfSection } from './ui/shelf';
 import { pauseGame } from './logic/timer';
+import { renderShelf, shelfSection } from './ui/shelf';
 import {
   healthUi,
   measurementsSection,
@@ -14,12 +15,30 @@ import {
   timerUi,
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
-import { renderStatus, statusUi } from './ui/dialogs';
+import { pauseUi, renderPauseDialog, renderStatus, statusUi } from './ui/dialogs';
 
 const gamePage = document.querySelector('main');
 
 const recipeSeciton = document.createElement('section');
 recipeSeciton.classList.add('recipeSeciton');
+
+const playField = document.createElement('div');
+playField.classList.add('play-field');
+playField.append(
+  timerUi,
+  shelfSection,
+  recipeSeciton,
+  measurementsSection,
+  cauldronUi,
+  healthUi,
+  brewButton,
+);
+
+function renderPlayField({ status }: IGameState) {
+  const isPaused = status === 'paused';
+  playField.classList.toggle('paused', isPaused);
+  playField.inert = isPaused;
+}
 
 function render(state: IGameState) {
   renderTimer(state);
@@ -29,24 +48,16 @@ function render(state: IGameState) {
   renderCauldron(state);
   renderHealth(state);
   renderBrewButton(state);
+  renderPlayField(state);
   renderStatus(state);
+  renderPauseDialog(state);
 }
 
 gameState.subscribe(render);
 render(gameState.get());
 
 if (gamePage) {
-  gamePage.replaceChildren(
-    timerUi,
-    pauseButton,
-    shelfSection,
-    recipeSeciton,
-    measurementsSection,
-    cauldronUi,
-    healthUi,
-    brewButton,
-    statusUi,
-  );
+  gamePage.replaceChildren(pauseButton, playField, statusUi, pauseUi);
 }
 
 document.addEventListener('visibilitychange', () => {
