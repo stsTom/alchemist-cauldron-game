@@ -17,6 +17,7 @@ export function createMenuState(): IGameState {
     activeRecipe: null,
     cauldronIngredients: [],
     shelfStock: {},
+    isLeaderboardOpen: false,
     difficulty: CHOSEN_DIFFICULTY,
   };
 }

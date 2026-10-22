@@ -2,7 +2,7 @@
 import { pauseGame, resumeGame } from '../logic/timer';
 import { goToMenu, startGame } from '../logic/brew-check';
 import { gameState } from '../state/game-state';
-import { addScore } from '../storage/leaderboard';
+import { addScore, loadLeaderboard } from '../storage/leaderboard';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -66,7 +66,6 @@ submitButton.type = 'submit';
 submitButton.textContent = 'Submit';
 
 const nameError = document.createElement('p');
-const savedMessage = document.createElement('p');
 
 nameForm.append(nameInput, submitButton, nameError);
 
@@ -80,29 +79,29 @@ nameForm.addEventListener('submit', (event) => {
   }
 
   addScore(name, gameState.get().score);
-  nameError.textContent = '';
-  nameForm.hidden = true;
-  savedMessage.textContent = `Saved: ${name}`;
+  gameState.set({ isLeaderboardOpen: true });
 });
 
 function resetNameForm() {
-  nameForm.hidden = false;
   nameInput.value = '';
   nameError.textContent = '';
-  savedMessage.textContent = '';
 }
 
 gameOverDialog.body.append(
   gameOverReason,
   gameOverScore,
   nameForm,
-  savedMessage,
   createDialogButton('Play Again', startGame),
   createDialogButton('Main Menu', goToMenu),
 );
 
-export function renderStatus({ status, gameOverReason: reason, score }: IGameState) {
-  statusUi.hidden = status !== 'game-over';
+export function renderStatus({
+  status,
+  gameOverReason: reason,
+  score,
+  isLeaderboardOpen,
+}: IGameState) {
+  statusUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen);
   if (statusUi.hidden) {
     resetNameForm();
     return;
@@ -110,6 +109,60 @@ export function renderStatus({ status, gameOverReason: reason, score }: IGameSta
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
+}
+
+function formatDate(ms: number) {
+  const date = new Date(ms);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${day}.${month}.${date.getFullYear()} ${hours}:${minutes}`;
+}
+
+function createRow(cellTag: 'th' | 'td', values: (string | number)[]) {
+  const row = document.createElement('tr');
+  row.append(
+    ...values.map((value) => {
+      const cell = document.createElement(cellTag);
+      cell.textContent = String(value);
+      return cell;
+    }),
+  );
+  return row;
+}
+
+const leaderboardDialog = createDialog('leaderboard', 'Leaderboard');
+export const leaderboardUi = leaderboardDialog.root;
+
+const leaderboardTable = document.createElement('table');
+const leaderboardHead = document.createElement('thead');
+const leaderboardRows = document.createElement('tbody');
+
+leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Date']));
+leaderboardTable.append(leaderboardHead, leaderboardRows);
+
+leaderboardDialog.body.append(leaderboardTable, createDialogButton('Back', goToMenu));
+
+export function renderLeaderboard({ isLeaderboardOpen }: IGameState) {
+  leaderboardUi.hidden = !isLeaderboardOpen;
+  if (leaderboardUi.hidden) return;
+
+  const leaderboard = loadLeaderboard();
+
+  if (leaderboard.length === 0) {
+    const emptyRow = createRow('td', ['No results yet']);
+    emptyRow.cells[0].colSpan = 4;
+    leaderboardRows.replaceChildren(emptyRow);
+    return;
+  }
+
+  leaderboardRows.replaceChildren(
+    ...leaderboard.map(({ name, score, date }, index) =>
+      createRow('td', [index + 1, name, score, formatDate(date)]),
+    ),
+  );
 }
 
 const pauseDialog = createDialog('pause', 'Paused');
