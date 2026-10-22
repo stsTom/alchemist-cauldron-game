@@ -50,7 +50,7 @@ function createDialogButton(label: string, onClick: () => void) {
 }
 
 const gameOverDialog = createDialog('game-over', 'Game over');
-export const statusUi = gameOverDialog.root;
+export const gameOverUi = gameOverDialog.root;
 
 const gameOverReason = document.createElement('p');
 const gameOverScore = document.createElement('p');
@@ -79,7 +79,7 @@ nameForm.addEventListener('submit', (event) => {
   }
 
   addScore(name, gameState.get().score);
-  gameState.set({ isLeaderboardOpen: true });
+  gameState.set({ isScoreSubmitted: true, isLeaderboardOpen: true });
 });
 
 function resetNameForm() {
@@ -96,21 +96,21 @@ gameOverDialog.body.append(
   createDialogButton('Main Menu', goToMenu),
 );
 
-export function renderStatus({
+export function renderGameOverDialog({
   status,
   gameOverReason: reason,
   score,
   isLeaderboardOpen,
+  isScoreSubmitted,
 }: IGameState) {
-  statusUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen);
-  if (statusUi.hidden) {
-    resetNameForm();
-    return;
-  }
+  if (status !== 'game-over') resetNameForm();
+
+  gameOverUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen);
+  if (gameOverUi.hidden) return;
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
-  nameForm.hidden = !isTopScore(score);
+  nameForm.hidden = Boolean(isScoreSubmitted) || !isTopScore(score);
 }
 
 function formatDate(ms: number) {
@@ -152,7 +152,7 @@ export function openLeaderboard() {
 leaderboardDialog.body.append(
   leaderboardTable,
   createDialogButton('Clear Leaderboard', () => gameState.set({ isClearConfirmOpen: true })),
-  createDialogButton('Back', goToMenu),
+  createDialogButton('Back', () => gameState.set({ isLeaderboardOpen: false })),
 );
 
 export function renderLeaderboard({ isLeaderboardOpen, isClearConfirmOpen }: IGameState) {

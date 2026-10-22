@@ -18,16 +18,16 @@ import {
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
 import {
   clearConfirmUi,
+  gameOverUi,
   helpButton,
   helpUi,
   leaderboardUi,
   pauseUi,
   renderClearConfirm,
+  renderGameOverDialog,
   renderHelpDialog,
   renderLeaderboard,
   renderPauseDialog,
-  renderStatus,
-  statusUi,
 } from './ui/dialogs';
 import { leaderboardButton, renderStartButton, startButton } from './ui/menu';
 
@@ -68,7 +68,7 @@ function render(state: IGameState) {
   renderBrewButton(state);
   renderStartButton(state);
   renderPlayField(state);
-  renderStatus(state);
+  renderGameOverDialog(state);
   renderPauseDialog(state);
   renderHelpDialog(state);
   renderLeaderboard(state);
@@ -83,7 +83,7 @@ if (gamePage) {
     helpButton,
     pauseButton,
     playField,
-    statusUi,
+    gameOverUi,
     pauseUi,
     helpUi,
     leaderboardUi,

@@ -19,6 +19,7 @@ export function createMenuState(): IGameState {
     shelfStock: {},
     isLeaderboardOpen: false,
     isClearConfirmOpen: false,
+    isScoreSubmitted: false,
     difficulty: CHOSEN_DIFFICULTY,
   };
 }

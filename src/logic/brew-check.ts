@@ -53,6 +53,7 @@ export function startGame() {
     lives: MAX_LIVES,
     timeLeft: STARTING_TIME,
     gameOverReason: null,
+    isScoreSubmitted: false,
   });
   resetRound();
   populateShelf();

@@ -37,6 +37,7 @@ export interface IGameState {
   isHelpOpen?: boolean;
   isLeaderboardOpen?: boolean;
   isClearConfirmOpen?: boolean;
+  isScoreSubmitted?: boolean;
   difficulty?: Difficulty; // Level 2+
   lastReactionId?: string | null; // Level 3+
 }
