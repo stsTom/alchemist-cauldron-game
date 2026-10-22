@@ -18,6 +18,7 @@ export function createMenuState(): IGameState {
     cauldronIngredients: [],
     shelfStock: {},
     isLeaderboardOpen: false,
+    isClearConfirmOpen: false,
     difficulty: CHOSEN_DIFFICULTY,
   };
 }

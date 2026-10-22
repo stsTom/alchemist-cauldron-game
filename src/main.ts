@@ -17,17 +17,19 @@ import {
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
 import {
+  clearConfirmUi,
   helpButton,
   helpUi,
   leaderboardUi,
   pauseUi,
+  renderClearConfirm,
   renderHelpDialog,
   renderLeaderboard,
   renderPauseDialog,
   renderStatus,
   statusUi,
 } from './ui/dialogs';
-import { renderStartButton, startButton } from './ui/menu';
+import { leaderboardButton, renderStartButton, startButton } from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -46,6 +48,7 @@ playField.append(
   healthUi,
   brewButton,
   startButton,
+  leaderboardButton,
 );
 
 function renderPlayField({ status, isHelpOpen, isLeaderboardOpen }: IGameState) {
@@ -69,6 +72,7 @@ function render(state: IGameState) {
   renderPauseDialog(state);
   renderHelpDialog(state);
   renderLeaderboard(state);
+  renderClearConfirm(state);
 }
 
 gameState.subscribe(render);
@@ -83,6 +87,7 @@ if (gamePage) {
     pauseUi,
     helpUi,
     leaderboardUi,
+    clearConfirmUi,
   );
 }
 

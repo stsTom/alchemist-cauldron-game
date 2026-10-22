@@ -21,6 +21,14 @@ export function loadLeaderboard(): ILeaderboardEntry[] {
   }
 }
 
+export function clearLeaderboard() {
+  try {
+    localStorage.removeItem(LEADERBOARD_KEY);
+  } catch {
+    // storage unavailable: nothing to clear
+  }
+}
+
 export function isTopScore(score: number) {
   const leaderboard = loadLeaderboard();
   return leaderboard.length < LEADERBOARD_SIZE || score > leaderboard[LEADERBOARD_SIZE - 1].score;

@@ -2,7 +2,7 @@
 import { pauseGame, resumeGame } from '../logic/timer';
 import { goToMenu, startGame } from '../logic/brew-check';
 import { gameState } from '../state/game-state';
-import { addScore, isTopScore, loadLeaderboard } from '../storage/leaderboard';
+import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -92,6 +92,7 @@ gameOverDialog.body.append(
   gameOverScore,
   nameForm,
   createDialogButton('Play Again', startGame),
+  createDialogButton('Leaderboard', openLeaderboard),
   createDialogButton('Main Menu', goToMenu),
 );
 
@@ -144,10 +145,18 @@ const leaderboardRows = document.createElement('tbody');
 leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Date']));
 leaderboardTable.append(leaderboardHead, leaderboardRows);
 
-leaderboardDialog.body.append(leaderboardTable, createDialogButton('Back', goToMenu));
+export function openLeaderboard() {
+  gameState.set({ isLeaderboardOpen: true });
+}
 
-export function renderLeaderboard({ isLeaderboardOpen }: IGameState) {
-  leaderboardUi.hidden = !isLeaderboardOpen;
+leaderboardDialog.body.append(
+  leaderboardTable,
+  createDialogButton('Clear Leaderboard', () => gameState.set({ isClearConfirmOpen: true })),
+  createDialogButton('Back', goToMenu),
+);
+
+export function renderLeaderboard({ isLeaderboardOpen, isClearConfirmOpen }: IGameState) {
+  leaderboardUi.hidden = !isLeaderboardOpen || Boolean(isClearConfirmOpen);
   if (leaderboardUi.hidden) return;
 
   const leaderboard = loadLeaderboard();
@@ -164,6 +173,21 @@ export function renderLeaderboard({ isLeaderboardOpen }: IGameState) {
       createRow('td', [index + 1, name, score, formatDate(date)]),
     ),
   );
+}
+
+const clearConfirmDialog = createDialog('clear-confirm', 'Clear all results?');
+export const clearConfirmUi = clearConfirmDialog.root;
+
+clearConfirmDialog.body.append(
+  createDialogButton('Clear', () => {
+    clearLeaderboard();
+    gameState.set({ isClearConfirmOpen: false });
+  }),
+  createDialogButton('Cancel', () => gameState.set({ isClearConfirmOpen: false })),
+);
+
+export function renderClearConfirm({ isClearConfirmOpen }: IGameState) {
+  clearConfirmUi.hidden = !isClearConfirmOpen;
 }
 
 const pauseDialog = createDialog('pause', 'Paused');

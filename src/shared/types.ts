@@ -36,6 +36,7 @@ export interface IGameState {
   shelfStock: Record<string, number>; // ingredient id -> portions left
   isHelpOpen?: boolean;
   isLeaderboardOpen?: boolean;
+  isClearConfirmOpen?: boolean;
   difficulty?: Difficulty; // Level 2+
   lastReactionId?: string | null; // Level 3+
 }
