@@ -1,7 +1,6 @@
 import type { IIngredient, IRecipeRange } from '../shared/types';
 import INGREDIENTS from '../data/ingredients.json';
-import { MAX_CAULDRON_INGREDIENTS } from '../shared/constants';
-import { gameState } from '../state/game-state';
+import { gameState, getSettings } from '../state/game-state';
 
 export interface IMeasurements {
   temperature: number;
@@ -36,7 +35,7 @@ export function addToCauldron(ingredientId: string) {
   const stock = shelfStock[ingredientId] ?? 0;
 
   if (!ingredient || stock <= 0) return;
-  if (cauldronIngredients.length >= MAX_CAULDRON_INGREDIENTS) return;
+  if (cauldronIngredients.length >= getSettings().maxCauldron) return;
 
   gameState.set({
     shelfStock: { ...shelfStock, [ingredientId]: stock - 1 },

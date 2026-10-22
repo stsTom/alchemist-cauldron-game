@@ -1,6 +1,5 @@
 import type { GameOverReason } from '../shared/types';
-import { STARTING_TIME, TIME_BONUS } from '../shared/constants';
-import { gameState } from '../state/game-state';
+import { gameState, getSettings } from '../state/game-state';
 
 const TICK_INTERVAL = 250;
 
@@ -56,6 +55,7 @@ export function startTimer() {
 }
 
 export function addTimeBonus() {
-  endTime = Math.min(endTime + TIME_BONUS, Date.now() + STARTING_TIME);
+  const { timeBonus, startingTime } = getSettings();
+  endTime = Math.min(endTime + timeBonus, Date.now() + startingTime);
   updateTimer();
 }
