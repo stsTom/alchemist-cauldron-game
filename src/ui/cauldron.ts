@@ -1,13 +1,14 @@
 import type { IGameState } from '../shared/types';
-import { MAX_CAULDRON_INGREDIENTS } from '../shared/constants';
+import { getDifficultySettings } from '../shared/difficulty';
 import { brew } from '../logic/brew-check';
 
 export const cauldronUi = document.createElement('div');
 cauldronUi.classList.add('cauldron');
 
-export function renderCauldron({ cauldronIngredients }: IGameState) {
-  cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${MAX_CAULDRON_INGREDIENTS}`;
-  cauldronUi.classList.toggle('full', cauldronIngredients.length >= MAX_CAULDRON_INGREDIENTS);
+export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
+  const { maxCauldron } = getDifficultySettings(difficulty);
+  cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
+  cauldronUi.classList.toggle('full', cauldronIngredients.length >= maxCauldron);
 }
 
 export const brewButton = document.createElement('button');

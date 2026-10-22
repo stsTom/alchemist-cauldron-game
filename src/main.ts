@@ -28,8 +28,10 @@ import {
   renderHelpDialog,
   renderLeaderboard,
   renderPauseDialog,
+  renderSettings,
+  settingsUi,
 } from './ui/dialogs';
-import { leaderboardButton, renderStartButton, startButton } from './ui/menu';
+import { leaderboardButton, renderStartButton, settingsButton, startButton } from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -49,10 +51,15 @@ playField.append(
   brewButton,
   startButton,
   leaderboardButton,
+  settingsButton,
 );
 
-function renderPlayField({ status, isHelpOpen, isLeaderboardOpen }: IGameState) {
-  const isPaused = status === 'paused' || Boolean(isHelpOpen) || Boolean(isLeaderboardOpen);
+function renderPlayField({ status, isHelpOpen, isLeaderboardOpen, isSettingsOpen }: IGameState) {
+  const isPaused =
+    status === 'paused' ||
+    Boolean(isHelpOpen) ||
+    Boolean(isLeaderboardOpen) ||
+    Boolean(isSettingsOpen);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
 }
@@ -73,6 +80,7 @@ function render(state: IGameState) {
   renderHelpDialog(state);
   renderLeaderboard(state);
   renderClearConfirm(state);
+  renderSettings(state);
 }
 
 gameState.subscribe(render);
@@ -88,6 +96,7 @@ if (gamePage) {
     helpUi,
     leaderboardUi,
     clearConfirmUi,
+    settingsUi,
   );
 }
 

@@ -1,6 +1,7 @@
-﻿import type { GameOverReason, IGameState } from '../shared/types';
+﻿import type { Difficulty, GameOverReason, IGameState } from '../shared/types';
 import { pauseGame, resumeGame } from '../logic/timer';
-import { goToMenu, startGame } from '../logic/brew-check';
+import { goToMenu, setDifficulty, startGame } from '../logic/brew-check';
+import { DIFFICULTIES } from '../shared/constants';
 import { gameState } from '../state/game-state';
 import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 
@@ -8,6 +9,12 @@ const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
   'no-lives': 'No lives left',
   'out-of-ingredients': 'Out of ingredients',
+};
+
+const DIFFICULTY_TEXT: Record<Difficulty, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
 };
 
 const NAME_PATTERN = /^[\p{L}\d _-]{2,15}$/u;
@@ -78,7 +85,8 @@ nameForm.addEventListener('submit', (event) => {
     return;
   }
 
-  addScore(name, gameState.get().score);
+  const { score, difficulty } = gameState.get();
+  addScore(name, score, difficulty);
   gameState.set({ isScoreSubmitted: true, isLeaderboardOpen: true });
 });
 
@@ -100,6 +108,7 @@ export function renderGameOverDialog({
   status,
   gameOverReason: reason,
   score,
+  difficulty,
   isLeaderboardOpen,
   isScoreSubmitted,
 }: IGameState) {
@@ -110,7 +119,7 @@ export function renderGameOverDialog({
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
-  nameForm.hidden = Boolean(isScoreSubmitted) || !isTopScore(score);
+  nameForm.hidden = Boolean(isScoreSubmitted) || !isTopScore(score, difficulty);
 }
 
 function formatDate(ms: number) {
@@ -142,7 +151,7 @@ const leaderboardTable = document.createElement('table');
 const leaderboardHead = document.createElement('thead');
 const leaderboardRows = document.createElement('tbody');
 
-leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Date']));
+leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Difficulty', 'Date']));
 leaderboardTable.append(leaderboardHead, leaderboardRows);
 
 export function openLeaderboard() {
@@ -155,22 +164,26 @@ leaderboardDialog.body.append(
   createDialogButton('Back', () => gameState.set({ isLeaderboardOpen: false })),
 );
 
-export function renderLeaderboard({ isLeaderboardOpen, isClearConfirmOpen }: IGameState) {
+export function renderLeaderboard({
+  isLeaderboardOpen,
+  isClearConfirmOpen,
+  difficulty,
+}: IGameState) {
   leaderboardUi.hidden = !isLeaderboardOpen || Boolean(isClearConfirmOpen);
   if (leaderboardUi.hidden) return;
 
-  const leaderboard = loadLeaderboard();
+  const leaderboard = loadLeaderboard(difficulty);
 
   if (leaderboard.length === 0) {
     const emptyRow = createRow('td', ['No results yet']);
-    emptyRow.cells[0].colSpan = 4;
+    emptyRow.cells[0].colSpan = 5;
     leaderboardRows.replaceChildren(emptyRow);
     return;
   }
 
   leaderboardRows.replaceChildren(
-    ...leaderboard.map(({ name, score, date }, index) =>
-      createRow('td', [index + 1, name, score, formatDate(date)]),
+    ...leaderboard.map(({ name, score, difficulty: level, date }, index) =>
+      createRow('td', [index + 1, name, score, DIFFICULTY_TEXT[level], formatDate(date)]),
     ),
   );
 }
@@ -246,4 +259,31 @@ helpButton.addEventListener('click', openHelp);
 
 export function renderHelpDialog({ isHelpOpen }: IGameState) {
   helpUi.hidden = !isHelpOpen;
+}
+
+const settingsDialog = createDialog('settings', 'Difficulty');
+export const settingsUi = settingsDialog.root;
+
+const difficultyButtons = DIFFICULTIES.map((difficulty) => {
+  const button = createDialogButton(DIFFICULTY_TEXT[difficulty], () => setDifficulty(difficulty));
+  button.dataset.difficulty = difficulty;
+  return button;
+});
+
+export function openSettings() {
+  gameState.set({ isSettingsOpen: true });
+}
+
+settingsDialog.body.append(
+  ...difficultyButtons,
+  createDialogButton('Close', () => gameState.set({ isSettingsOpen: false })),
+);
+
+export function renderSettings({ status, isSettingsOpen, difficulty }: IGameState) {
+  settingsUi.hidden = status !== 'menu' || !isSettingsOpen;
+  if (settingsUi.hidden) return;
+
+  difficultyButtons.forEach((button) => {
+    button.ariaPressed = String(button.dataset.difficulty === difficulty);
+  });
 }
