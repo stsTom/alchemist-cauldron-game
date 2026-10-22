@@ -1,5 +1,6 @@
 import type { Difficulty } from '../shared/types';
 import { createMenuState, gameState, getSettings } from '../state/game-state';
+import { clearSave } from '../storage/save';
 import { getMeasurements, isInRange } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
@@ -67,6 +68,7 @@ export function startGame() {
 
 export function goToMenu() {
   stopTimer();
+  clearSave();
   gameState.set(createMenuState(gameState.get().difficulty));
 }
 

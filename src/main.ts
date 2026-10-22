@@ -2,6 +2,7 @@ import './styles/style.scss';
 import type { IGameState } from './shared/types';
 import { gameState } from './state/game-state';
 import { pauseGame } from './logic/timer';
+import { clearSave, saveGame } from './storage/save';
 import { renderShelf, shelfSection } from './ui/shelf';
 import {
   healthUi,
@@ -84,6 +85,10 @@ function render(state: IGameState) {
 }
 
 gameState.subscribe(render);
+gameState.subscribe((state) => {
+  if (state.status === 'playing' || state.status === 'paused') saveGame(state);
+  if (state.status === 'game-over') clearSave();
+});
 render(gameState.get());
 
 if (gamePage) {
