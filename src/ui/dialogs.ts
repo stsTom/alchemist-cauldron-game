@@ -9,6 +9,9 @@ const REASON_TEXT: Record<GameOverReason, string> = {
   'out-of-ingredients': 'Out of ingredients',
 };
 
+const NAME_PATTERN = /^[\p{L}\d _-]{2,15}$/u;
+const NAME_ERROR = 'Name must be 2–15 characters: letters, digits, space, _ or -';
+
 const RULES_TITLE = 'How the game works';
 
 const RULES_STEPS = [
@@ -51,16 +54,57 @@ export const statusUi = gameOverDialog.root;
 const gameOverReason = document.createElement('p');
 const gameOverScore = document.createElement('p');
 
+const nameForm = document.createElement('form');
+nameForm.classList.add('name-form');
+
+const nameInput = document.createElement('input');
+nameInput.placeholder = 'Your name';
+
+const submitButton = document.createElement('button');
+submitButton.type = 'submit';
+submitButton.textContent = 'Submit';
+
+const nameError = document.createElement('p');
+const savedMessage = document.createElement('p');
+
+nameForm.append(nameInput, submitButton, nameError);
+
+nameForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const name = nameInput.value.trim();
+
+  if (!NAME_PATTERN.test(name)) {
+    nameError.textContent = NAME_ERROR;
+    return;
+  }
+
+  nameError.textContent = '';
+  nameForm.hidden = true;
+  savedMessage.textContent = `Saved: ${name}`;
+});
+
+function resetNameForm() {
+  nameForm.hidden = false;
+  nameInput.value = '';
+  nameError.textContent = '';
+  savedMessage.textContent = '';
+}
+
 gameOverDialog.body.append(
   gameOverReason,
   gameOverScore,
+  nameForm,
+  savedMessage,
   createDialogButton('Play Again', startGame),
   createDialogButton('Main Menu', goToMenu),
 );
 
 export function renderStatus({ status, gameOverReason: reason, score }: IGameState) {
   statusUi.hidden = status !== 'game-over';
-  if (statusUi.hidden) return;
+  if (statusUi.hidden) {
+    resetNameForm();
+    return;
+  }
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
