@@ -85,7 +85,8 @@ nameForm.addEventListener('submit', (event) => {
     return;
   }
 
-  addScore(name, gameState.get().score);
+  const { score, difficulty } = gameState.get();
+  addScore(name, score, difficulty);
   gameState.set({ isScoreSubmitted: true, isLeaderboardOpen: true });
 });
 
@@ -107,6 +108,7 @@ export function renderGameOverDialog({
   status,
   gameOverReason: reason,
   score,
+  difficulty,
   isLeaderboardOpen,
   isScoreSubmitted,
 }: IGameState) {
@@ -117,7 +119,7 @@ export function renderGameOverDialog({
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
-  nameForm.hidden = Boolean(isScoreSubmitted) || !isTopScore(score);
+  nameForm.hidden = Boolean(isScoreSubmitted) || !isTopScore(score, difficulty);
 }
 
 function formatDate(ms: number) {
@@ -149,7 +151,7 @@ const leaderboardTable = document.createElement('table');
 const leaderboardHead = document.createElement('thead');
 const leaderboardRows = document.createElement('tbody');
 
-leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Date']));
+leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Difficulty', 'Date']));
 leaderboardTable.append(leaderboardHead, leaderboardRows);
 
 export function openLeaderboard() {
@@ -162,22 +164,26 @@ leaderboardDialog.body.append(
   createDialogButton('Back', () => gameState.set({ isLeaderboardOpen: false })),
 );
 
-export function renderLeaderboard({ isLeaderboardOpen, isClearConfirmOpen }: IGameState) {
+export function renderLeaderboard({
+  isLeaderboardOpen,
+  isClearConfirmOpen,
+  difficulty,
+}: IGameState) {
   leaderboardUi.hidden = !isLeaderboardOpen || Boolean(isClearConfirmOpen);
   if (leaderboardUi.hidden) return;
 
-  const leaderboard = loadLeaderboard();
+  const leaderboard = loadLeaderboard(difficulty);
 
   if (leaderboard.length === 0) {
     const emptyRow = createRow('td', ['No results yet']);
-    emptyRow.cells[0].colSpan = 4;
+    emptyRow.cells[0].colSpan = 5;
     leaderboardRows.replaceChildren(emptyRow);
     return;
   }
 
   leaderboardRows.replaceChildren(
-    ...leaderboard.map(({ name, score, date }, index) =>
-      createRow('td', [index + 1, name, score, formatDate(date)]),
+    ...leaderboard.map(({ name, score, difficulty: level, date }, index) =>
+      createRow('td', [index + 1, name, score, DIFFICULTY_TEXT[level], formatDate(date)]),
     ),
   );
 }

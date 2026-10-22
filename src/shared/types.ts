@@ -46,6 +46,7 @@ export interface IGameState {
 export interface ILeaderboardEntry {
   name: string;
   score: number;
+  difficulty: Difficulty;
   date: number; // ms timestamp
 }
 
