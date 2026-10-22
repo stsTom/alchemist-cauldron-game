@@ -2,6 +2,7 @@
 import { pauseGame, resumeGame } from '../logic/timer';
 import { goToMenu, startGame } from '../logic/brew-check';
 import { gameState } from '../state/game-state';
+import { addScore } from '../storage/leaderboard';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -78,6 +79,7 @@ nameForm.addEventListener('submit', (event) => {
     return;
   }
 
+  addScore(name, gameState.get().score);
   nameError.textContent = '';
   nameForm.hidden = true;
   savedMessage.textContent = `Saved: ${name}`;
