@@ -21,6 +21,11 @@ export function loadLeaderboard(): ILeaderboardEntry[] {
   }
 }
 
+export function isTopScore(score: number) {
+  const leaderboard = loadLeaderboard();
+  return leaderboard.length < LEADERBOARD_SIZE || score > leaderboard[LEADERBOARD_SIZE - 1].score;
+}
+
 export function addScore(name: string, score: number) {
   const leaderboard = [...loadLeaderboard(), { name, score, date: Date.now() }]
     .sort((a, b) => b.score - a.score || a.date - b.date)

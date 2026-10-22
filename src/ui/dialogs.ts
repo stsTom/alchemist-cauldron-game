@@ -2,7 +2,7 @@
 import { pauseGame, resumeGame } from '../logic/timer';
 import { goToMenu, startGame } from '../logic/brew-check';
 import { gameState } from '../state/game-state';
-import { addScore, loadLeaderboard } from '../storage/leaderboard';
+import { addScore, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -109,6 +109,7 @@ export function renderStatus({
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';
   gameOverScore.textContent = `Score: ${score}`;
+  nameForm.hidden = !isTopScore(score);
 }
 
 function formatDate(ms: number) {
