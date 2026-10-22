@@ -32,7 +32,13 @@ import {
   renderSettings,
   settingsUi,
 } from './ui/dialogs';
-import { leaderboardButton, renderStartButton, settingsButton, startButton } from './ui/menu';
+import {
+  continueButton,
+  leaderboardButton,
+  renderStartButton,
+  settingsButton,
+  startButton,
+} from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -50,6 +56,7 @@ playField.append(
   cauldronUi,
   healthUi,
   brewButton,
+  continueButton,
   startButton,
   leaderboardButton,
   settingsButton,
