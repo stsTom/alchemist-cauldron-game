@@ -1,6 +1,7 @@
-﻿import type { GameOverReason, IGameState } from '../shared/types';
+﻿import type { Difficulty, GameOverReason, IGameState } from '../shared/types';
 import { pauseGame, resumeGame } from '../logic/timer';
-import { goToMenu, startGame } from '../logic/brew-check';
+import { goToMenu, setDifficulty, startGame } from '../logic/brew-check';
+import { DIFFICULTIES } from '../shared/constants';
 import { gameState } from '../state/game-state';
 import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 
@@ -8,6 +9,12 @@ const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
   'no-lives': 'No lives left',
   'out-of-ingredients': 'Out of ingredients',
+};
+
+const DIFFICULTY_TEXT: Record<Difficulty, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
 };
 
 const NAME_PATTERN = /^[\p{L}\d _-]{2,15}$/u;
@@ -246,4 +253,31 @@ helpButton.addEventListener('click', openHelp);
 
 export function renderHelpDialog({ isHelpOpen }: IGameState) {
   helpUi.hidden = !isHelpOpen;
+}
+
+const settingsDialog = createDialog('settings', 'Difficulty');
+export const settingsUi = settingsDialog.root;
+
+const difficultyButtons = DIFFICULTIES.map((difficulty) => {
+  const button = createDialogButton(DIFFICULTY_TEXT[difficulty], () => setDifficulty(difficulty));
+  button.dataset.difficulty = difficulty;
+  return button;
+});
+
+export function openSettings() {
+  gameState.set({ isSettingsOpen: true });
+}
+
+settingsDialog.body.append(
+  ...difficultyButtons,
+  createDialogButton('Close', () => gameState.set({ isSettingsOpen: false })),
+);
+
+export function renderSettings({ status, isSettingsOpen, difficulty }: IGameState) {
+  settingsUi.hidden = status !== 'menu' || !isSettingsOpen;
+  if (settingsUi.hidden) return;
+
+  difficultyButtons.forEach((button) => {
+    button.ariaPressed = String(button.dataset.difficulty === difficulty);
+  });
 }

@@ -1,12 +1,15 @@
-import { MAX_LIVES, SCORE_PER_BREW, STARTING_TIME } from '../shared/constants';
-import { createMenuState, gameState } from '../state/game-state';
+import type { Difficulty } from '../shared/types';
+import { createMenuState, gameState, getSettings } from '../state/game-state';
 import { getMeasurements, isInRange } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
 import { addTimeBonus, endGame, startTimer, stopTimer } from './timer';
 
 export function resetRound() {
-  gameState.set({ activeRecipe: getRandomRecipe(), cauldronIngredients: [] });
+  gameState.set({
+    activeRecipe: getRandomRecipe(gameState.get().difficulty),
+    cauldronIngredients: [],
+  });
 }
 
 export function clearCauldron() {
@@ -27,7 +30,7 @@ export function brew() {
   let { lives, score } = gameState.get();
 
   if (isSuccess) {
-    score += SCORE_PER_BREW;
+    score += getSettings().scorePerBrew;
     gameState.set({ score });
     addTimeBonus();
   } else {
@@ -47,11 +50,13 @@ export function brew() {
 }
 
 export function startGame() {
+  const { lives, startingTime } = getSettings();
+
   gameState.set({
     status: 'playing',
     score: 0,
-    lives: MAX_LIVES,
-    timeLeft: STARTING_TIME,
+    lives,
+    timeLeft: startingTime,
     gameOverReason: null,
     isScoreSubmitted: false,
   });
@@ -62,5 +67,10 @@ export function startGame() {
 
 export function goToMenu() {
   stopTimer();
-  gameState.set(createMenuState());
+  gameState.set(createMenuState(gameState.get().difficulty));
+}
+
+export function setDifficulty(difficulty: Difficulty) {
+  if (gameState.get().status !== 'menu') return;
+  gameState.set({ difficulty });
 }
