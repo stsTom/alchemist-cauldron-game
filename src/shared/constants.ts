@@ -12,4 +12,6 @@ export const SCORE_PER_BREW = DIFFICULTY_SETTINGS['score-per-brew'][CHOSEN_DIFFI
 export const TIME_BONUS = DIFFICULTY_SETTINGS['time-bonus-per-brew'][CHOSEN_DIFFICULTY] * 1000; // ms
 export const LOW_TIME_THRESHOLD = 15 * 1000; // ms
 export const RECIPE_TOLERANCE = DIFFICULTY_SETTINGS['recipe-tolerance'][CHOSEN_DIFFICULTY];
+export const LEADERBOARD_KEY = 'alchemist-cauldron-leaderboard';
+export const LEADERBOARD_SIZE = 10;
 export const { min: MIN_STOCK, max: MAX_STOCK }: IRecipeRange = { min: 2, max: 15 };

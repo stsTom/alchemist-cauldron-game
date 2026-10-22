@@ -58,6 +58,11 @@
   overflow-y: auto;
 }
 
+.leaderboard th,
+.leaderboard td {
+  padding: 0.25rem 0.75rem;
+}
+
 .dialog-body {
   display: flex;
   flex-direction: column;

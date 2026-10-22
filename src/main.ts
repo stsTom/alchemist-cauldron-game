@@ -17,15 +17,19 @@ import {
 } from './ui/bars';
 import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
 import {
+  clearConfirmUi,
+  gameOverUi,
   helpButton,
   helpUi,
+  leaderboardUi,
   pauseUi,
+  renderClearConfirm,
+  renderGameOverDialog,
   renderHelpDialog,
+  renderLeaderboard,
   renderPauseDialog,
-  renderStatus,
-  statusUi,
 } from './ui/dialogs';
-import { renderStartButton, startButton } from './ui/menu';
+import { leaderboardButton, renderStartButton, startButton } from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -44,10 +48,11 @@ playField.append(
   healthUi,
   brewButton,
   startButton,
+  leaderboardButton,
 );
 
-function renderPlayField({ status, isHelpOpen }: IGameState) {
-  const isPaused = status === 'paused' || Boolean(isHelpOpen);
+function renderPlayField({ status, isHelpOpen, isLeaderboardOpen }: IGameState) {
+  const isPaused = status === 'paused' || Boolean(isHelpOpen) || Boolean(isLeaderboardOpen);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
 }
@@ -63,16 +68,27 @@ function render(state: IGameState) {
   renderBrewButton(state);
   renderStartButton(state);
   renderPlayField(state);
-  renderStatus(state);
+  renderGameOverDialog(state);
   renderPauseDialog(state);
   renderHelpDialog(state);
+  renderLeaderboard(state);
+  renderClearConfirm(state);
 }
 
 gameState.subscribe(render);
 render(gameState.get());
 
 if (gamePage) {
-  gamePage.replaceChildren(helpButton, pauseButton, playField, statusUi, pauseUi, helpUi);
+  gamePage.replaceChildren(
+    helpButton,
+    pauseButton,
+    playField,
+    gameOverUi,
+    pauseUi,
+    helpUi,
+    leaderboardUi,
+    clearConfirmUi,
+  );
 }
 
 document.addEventListener('visibilitychange', () => {
