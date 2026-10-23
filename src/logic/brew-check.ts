@@ -19,6 +19,13 @@ export function clearCauldron() {
   gameState.set({ cauldronIngredients: [] });
 }
 
+export function pourOut() {
+  const { status, cauldronIngredients } = gameState.get();
+  if (status !== 'playing' || cauldronIngredients.length === 0) return;
+
+  clearCauldron();
+}
+
 export function brew() {
   const { status, activeRecipe, cauldronIngredients, shelfStock, reactionIds } = gameState.get();
   if (status !== 'playing' || !activeRecipe || cauldronIngredients.length === 0) return;

@@ -1,6 +1,6 @@
 import type { IGameState } from '../shared/types';
 import { getDifficultySettings } from '../shared/difficulty';
-import { brew } from '../logic/brew-check';
+import { brew, pourOut } from '../logic/brew-check';
 import { getReactionsByIds } from '../logic/reactions';
 
 export const reactionsUi = document.createElement('ul');
@@ -33,4 +33,14 @@ brewButton.addEventListener('click', brew);
 export function renderBrewButton({ status, cauldronIngredients }: IGameState) {
   brewButton.hidden = status === 'menu';
   brewButton.disabled = status !== 'playing' || cauldronIngredients.length === 0;
+}
+
+export const pourOutButton = document.createElement('button');
+pourOutButton.classList.add('pour-out-button');
+pourOutButton.textContent = 'Pour Out';
+pourOutButton.addEventListener('click', pourOut);
+
+export function renderPourOutButton({ status, cauldronIngredients }: IGameState) {
+  pourOutButton.hidden = status === 'menu';
+  pourOutButton.disabled = status !== 'playing' || cauldronIngredients.length === 0;
 }
