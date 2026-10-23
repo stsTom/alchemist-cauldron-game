@@ -32,6 +32,15 @@
   }
 }
 
+.ingredient-card {
+  cursor: grab;
+}
+
+.ingredient-card.empty {
+  color: #9e9e9e;
+  cursor: default;
+}
+
 .cauldron {
   width: 16rem;
   min-height: 10rem;

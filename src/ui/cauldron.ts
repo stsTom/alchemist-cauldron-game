@@ -2,6 +2,7 @@ import type { IGameState } from '../shared/types';
 import { getDifficultySettings } from '../shared/difficulty';
 import { brew, pourOut } from '../logic/brew-check';
 import { getReactionsByIds } from '../logic/reactions';
+import { addToCauldron } from '../logic/calculate-cauldron';
 
 export const reactionsUi = document.createElement('ul');
 reactionsUi.classList.add('reactions');
@@ -22,6 +23,15 @@ const cauldronContentsUi = document.createElement('ul');
 export const cauldronUi = document.createElement('section');
 cauldronUi.classList.add('cauldron');
 cauldronUi.append(cauldronCountUi, cauldronContentsUi);
+
+function handleDrop(event: DragEvent) {
+  event.preventDefault();
+  const id = event.dataTransfer?.getData('text/plain');
+  if (id) addToCauldron(id);
+}
+
+cauldronUi.addEventListener('dragover', (event) => event.preventDefault());
+cauldronUi.addEventListener('drop', handleDrop);
 
 export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
   const { maxCauldron } = getDifficultySettings(difficulty);
