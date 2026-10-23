@@ -32,8 +32,29 @@
   }
 }
 
+.ingredient-card {
+  cursor: grab;
+}
+
+.ingredient-card.empty {
+  color: #9e9e9e;
+  cursor: default;
+}
+
+.cauldron {
+  width: 16rem;
+  min-height: 10rem;
+  padding: 0.5rem;
+  border: 1px dashed currentColor;
+  border-radius: 8px;
+}
+
 .cauldron.full {
   color: #e65100;
+}
+
+.cauldron.drop-target {
+  color: #2e7d32;
 }
 
 .reactions .active {

@@ -2,6 +2,8 @@ import type { IGameState } from '../shared/types';
 import { getDifficultySettings } from '../shared/difficulty';
 import { brew, pourOut } from '../logic/brew-check';
 import { getReactionsByIds } from '../logic/reactions';
+import { addToCauldron } from '../logic/calculate-cauldron';
+import { gameState, getSettings } from '../state/game-state';
 
 export const reactionsUi = document.createElement('ul');
 reactionsUi.classList.add('reactions');
@@ -16,13 +18,53 @@ export function renderReactions({ reactionIds, cauldronIngredients }: IGameState
   reactionsUi.replaceChildren(...items);
 }
 
-export const cauldronUi = document.createElement('div');
+const cauldronCountUi = document.createElement('p');
+const cauldronContentsUi = document.createElement('ul');
+
+export const cauldronUi = document.createElement('section');
 cauldronUi.classList.add('cauldron');
+cauldronUi.append(cauldronCountUi, cauldronContentsUi);
+
+function canDrop() {
+  const { status, cauldronIngredients } = gameState.get();
+  return status === 'playing' && cauldronIngredients.length < getSettings().maxCauldron;
+}
+
+function handleDragOver(event: DragEvent) {
+  if (!canDrop()) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+  cauldronUi.classList.add('drop-target');
+}
+
+function handleDragLeave(event: DragEvent) {
+  if (cauldronUi.contains(event.relatedTarget as Node | null)) return;
+  cauldronUi.classList.remove('drop-target');
+}
+
+function handleDrop(event: DragEvent) {
+  event.preventDefault();
+  cauldronUi.classList.remove('drop-target');
+  if (!canDrop()) return;
+  const id = event.dataTransfer?.getData('text/plain');
+  if (id) addToCauldron(id);
+}
+
+cauldronUi.addEventListener('dragover', handleDragOver);
+cauldronUi.addEventListener('dragleave', handleDragLeave);
+cauldronUi.addEventListener('drop', handleDrop);
 
 export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
   const { maxCauldron } = getDifficultySettings(difficulty);
-  cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
+  cauldronCountUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
   cauldronUi.classList.toggle('full', cauldronIngredients.length >= maxCauldron);
+
+  const items = cauldronIngredients.map(({ name }) => {
+    const item = document.createElement('li');
+    item.textContent = name;
+    return item;
+  });
+  cauldronContentsUi.replaceChildren(...items);
 }
 
 export const brewButton = document.createElement('button');
