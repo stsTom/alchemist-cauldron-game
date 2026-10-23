@@ -19,9 +19,11 @@ import {
 import {
   brewButton,
   cauldronUi,
+  pourOutButton,
   reactionsUi,
   renderBrewButton,
   renderCauldron,
+  renderPourOutButton,
   renderReactions,
 } from './ui/cauldron';
 import {
@@ -64,6 +66,7 @@ playField.append(
   cauldronUi,
   healthUi,
   brewButton,
+  pourOutButton,
   continueButton,
   startButton,
   leaderboardButton,
@@ -90,6 +93,7 @@ function render(state: IGameState) {
   renderReactions(state);
   renderHealth(state);
   renderBrewButton(state);
+  renderPourOutButton(state);
   renderStartButton(state);
   renderPlayField(state);
   renderGameOverDialog(state);
