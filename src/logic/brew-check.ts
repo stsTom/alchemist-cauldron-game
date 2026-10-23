@@ -5,7 +5,8 @@ import { getMeasurements, isInRange } from './calculate-cauldron';
 import { getReactionsByIds, pickReactionIds } from './reactions';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
-import { addTimeBonus, endGame, startTimer, stopTimer } from './timer';
+import { POUR_OUT_PENALTY } from '../shared/constants';
+import { addTimeBonus, endGame, removeTime, startTimer, stopTimer } from './timer';
 
 export function resetRound() {
   gameState.set({
@@ -24,6 +25,7 @@ export function pourOut() {
   if (status !== 'playing' || cauldronIngredients.length === 0) return;
 
   clearCauldron();
+  removeTime(POUR_OUT_PENALTY);
 }
 
 export function brew() {
