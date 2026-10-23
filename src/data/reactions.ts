@@ -1,7 +1,11 @@
-import type { IIngredient, IReaction } from '../shared/types';
+import type { IIngredient, IMeasurements, IReaction } from '../shared/types';
 
 function has(ingredients: IIngredient[], ...ids: string[]) {
   return ids.every((id) => ingredients.some((ingredient) => ingredient.id === id));
+}
+
+function sum(ingredients: IIngredient[], key: keyof IMeasurements) {
+  return ingredients.reduce((total, ingredient) => total + ingredient[key], 0);
 }
 
 export const REACTIONS: IReaction[] = [
@@ -50,5 +54,51 @@ export const REACTIONS: IReaction[] = [
       temperature: values.temperature + 10,
       magicPower: values.magicPower * 1.25,
     }),
+  },
+  {
+    id: 'annihilation',
+    name: 'Annihilation',
+    description:
+      'One ingredient Temperature > +15 and another < −15 → Temperature set to 0, Density ×2',
+    isActive: (ingredients) =>
+      ingredients.some(({ temperature }) => temperature > 15) &&
+      ingredients.some(({ temperature }) => temperature < -15),
+    apply: (values) => ({ ...values, temperature: 0, density: values.density * 2 }),
+  },
+  {
+    id: 'pressure-spike',
+    name: 'Pressure Spike',
+    description: 'Total Density >= 70 → Density set to 70, Magic Power +10%',
+    isActive: (ingredients) => sum(ingredients, 'density') >= 70,
+    apply: (values) => ({ ...values, density: 70, magicPower: values.magicPower * 1.1 }),
+  },
+  {
+    id: 'magma-flux',
+    name: 'Magma Flux',
+    description: 'Total Temperature >= 60 → Magic Power +20%, Density −10%',
+    isActive: (ingredients) => sum(ingredients, 'temperature') >= 60,
+    apply: (values) => ({
+      ...values,
+      magicPower: values.magicPower * 1.2,
+      density: values.density * 0.9,
+    }),
+  },
+  {
+    id: 'deep-freeze',
+    name: 'Deep Freeze',
+    description: 'Total Temperature <= −20 → Density +15%, Magic Power −15%',
+    isActive: (ingredients) => sum(ingredients, 'temperature') <= -20,
+    apply: (values) => ({
+      ...values,
+      density: values.density * 1.15,
+      magicPower: values.magicPower * 0.85,
+    }),
+  },
+  {
+    id: 'arcane-saturation',
+    name: 'Arcane Saturation',
+    description: 'Total Magic Power >= 80 → Magic Power set to 80, Temperature +5',
+    isActive: (ingredients) => sum(ingredients, 'magicPower') >= 80,
+    apply: (values) => ({ ...values, magicPower: 80, temperature: values.temperature + 5 }),
   },
 ];
