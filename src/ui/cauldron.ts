@@ -3,6 +3,7 @@ import { getDifficultySettings } from '../shared/difficulty';
 import { brew, pourOut } from '../logic/brew-check';
 import { getReactionsByIds } from '../logic/reactions';
 import { addToCauldron } from '../logic/calculate-cauldron';
+import { gameState, getSettings } from '../state/game-state';
 
 export const reactionsUi = document.createElement('ul');
 reactionsUi.classList.add('reactions');
@@ -24,13 +25,33 @@ export const cauldronUi = document.createElement('section');
 cauldronUi.classList.add('cauldron');
 cauldronUi.append(cauldronCountUi, cauldronContentsUi);
 
+function canDrop() {
+  const { status, cauldronIngredients } = gameState.get();
+  return status === 'playing' && cauldronIngredients.length < getSettings().maxCauldron;
+}
+
+function handleDragOver(event: DragEvent) {
+  if (!canDrop()) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+  cauldronUi.classList.add('drop-target');
+}
+
+function handleDragLeave(event: DragEvent) {
+  if (cauldronUi.contains(event.relatedTarget as Node | null)) return;
+  cauldronUi.classList.remove('drop-target');
+}
+
 function handleDrop(event: DragEvent) {
   event.preventDefault();
+  cauldronUi.classList.remove('drop-target');
+  if (!canDrop()) return;
   const id = event.dataTransfer?.getData('text/plain');
   if (id) addToCauldron(id);
 }
 
-cauldronUi.addEventListener('dragover', (event) => event.preventDefault());
+cauldronUi.addEventListener('dragover', handleDragOver);
+cauldronUi.addEventListener('dragleave', handleDragLeave);
 cauldronUi.addEventListener('drop', handleDrop);
 
 export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
