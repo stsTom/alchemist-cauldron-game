@@ -40,6 +40,7 @@ export interface IGameState {
   isScoreSubmitted?: boolean;
   isSettingsOpen?: boolean;
   difficulty: Difficulty;
+  reactionIds: string[]; // enabled for the current round
   lastReactionId?: string | null; // Level 3+
 }
 
@@ -52,6 +53,7 @@ export type ISavedGame = Pick<
   | 'activeRecipe'
   | 'cauldronIngredients'
   | 'shelfStock'
+  | 'reactionIds'
   | 'status'
 >;
 
@@ -62,14 +64,19 @@ export interface ILeaderboardEntry {
   date: number; // ms timestamp
 }
 
+export interface IMeasurements {
+  temperature: number;
+  density: number;
+  magicPower: number;
+}
+
 export interface IReaction {
   id: string;
   name: string;
-  difficulty: Exclude<Difficulty, 'easy'>;
+  description: string;
+  timePenalty?: number; // seconds
+  lifePenalty?: number;
+  clearsCauldron?: boolean;
   isActive: (ingredients: IIngredient[]) => boolean;
-  apply: (values: { temperature: number; density: number; magicPower: number }) => {
-    temperature: number;
-    density: number;
-    magicPower: number;
-  };
+  apply: (values: IMeasurements) => IMeasurements;
 }

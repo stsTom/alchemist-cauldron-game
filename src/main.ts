@@ -16,7 +16,14 @@ import {
   scoreUi,
   timerUi,
 } from './ui/bars';
-import { brewButton, cauldronUi, renderBrewButton, renderCauldron } from './ui/cauldron';
+import {
+  brewButton,
+  cauldronUi,
+  reactionsUi,
+  renderBrewButton,
+  renderCauldron,
+  renderReactions,
+} from './ui/cauldron';
 import {
   clearConfirmUi,
   gameOverUi,
@@ -44,6 +51,7 @@ const gamePage = document.querySelector('main');
 
 const recipeSeciton = document.createElement('section');
 recipeSeciton.classList.add('recipeSeciton');
+recipeSeciton.append(reactionsUi);
 
 const playField = document.createElement('div');
 playField.classList.add('play-field');
@@ -79,6 +87,7 @@ function render(state: IGameState) {
   renderShelf(state);
   renderMeasurements(state);
   renderCauldron(state);
+  renderReactions(state);
   renderHealth(state);
   renderBrewButton(state);
   renderStartButton(state);
