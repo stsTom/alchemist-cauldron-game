@@ -16,13 +16,24 @@ export function renderReactions({ reactionIds, cauldronIngredients }: IGameState
   reactionsUi.replaceChildren(...items);
 }
 
-export const cauldronUi = document.createElement('div');
+const cauldronCountUi = document.createElement('p');
+const cauldronContentsUi = document.createElement('ul');
+
+export const cauldronUi = document.createElement('section');
 cauldronUi.classList.add('cauldron');
+cauldronUi.append(cauldronCountUi, cauldronContentsUi);
 
 export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
   const { maxCauldron } = getDifficultySettings(difficulty);
-  cauldronUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
+  cauldronCountUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
   cauldronUi.classList.toggle('full', cauldronIngredients.length >= maxCauldron);
+
+  const items = cauldronIngredients.map(({ name }) => {
+    const item = document.createElement('li');
+    item.textContent = name;
+    return item;
+  });
+  cauldronContentsUi.replaceChildren(...items);
 }
 
 export const brewButton = document.createElement('button');
