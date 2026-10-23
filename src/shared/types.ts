@@ -43,6 +43,18 @@ export interface IGameState {
   lastReactionId?: string | null; // Level 3+
 }
 
+export type ISavedGame = Pick<
+  IGameState,
+  | 'difficulty'
+  | 'score'
+  | 'timeLeft'
+  | 'lives'
+  | 'activeRecipe'
+  | 'cauldronIngredients'
+  | 'shelfStock'
+  | 'status'
+>;
+
 export interface ILeaderboardEntry {
   name: string;
   score: number;

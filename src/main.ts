@@ -2,6 +2,7 @@ import './styles/style.scss';
 import type { IGameState } from './shared/types';
 import { gameState } from './state/game-state';
 import { pauseGame } from './logic/timer';
+import { clearSave, saveGame } from './storage/save';
 import { renderShelf, shelfSection } from './ui/shelf';
 import {
   healthUi,
@@ -31,7 +32,13 @@ import {
   renderSettings,
   settingsUi,
 } from './ui/dialogs';
-import { leaderboardButton, renderStartButton, settingsButton, startButton } from './ui/menu';
+import {
+  continueButton,
+  leaderboardButton,
+  renderStartButton,
+  settingsButton,
+  startButton,
+} from './ui/menu';
 
 const gamePage = document.querySelector('main');
 
@@ -49,6 +56,7 @@ playField.append(
   cauldronUi,
   healthUi,
   brewButton,
+  continueButton,
   startButton,
   leaderboardButton,
   settingsButton,
@@ -84,6 +92,10 @@ function render(state: IGameState) {
 }
 
 gameState.subscribe(render);
+gameState.subscribe((state) => {
+  if (state.status === 'playing' || state.status === 'paused') saveGame(state);
+  if (state.status === 'game-over') clearSave();
+});
 render(gameState.get());
 
 if (gamePage) {

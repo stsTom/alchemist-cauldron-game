@@ -1,5 +1,6 @@
 import type { Difficulty } from '../shared/types';
 import { createMenuState, gameState, getSettings } from '../state/game-state';
+import { clearSave, loadGame } from '../storage/save';
 import { getMeasurements, isInRange } from './calculate-cauldron';
 import { getRandomRecipe } from './recipe-generator';
 import { populateShelf } from './stock';
@@ -65,8 +66,16 @@ export function startGame() {
   startTimer();
 }
 
+export function continueGame() {
+  const save = loadGame();
+  if (!save) return;
+
+  gameState.set({ ...createMenuState(save.difficulty), ...save, status: 'paused' });
+}
+
 export function goToMenu() {
   stopTimer();
+  clearSave();
   gameState.set(createMenuState(gameState.get().difficulty));
 }
 

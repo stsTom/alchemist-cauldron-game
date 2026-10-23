@@ -1,6 +1,11 @@
 import type { IGameState } from '../shared/types';
-import { startGame } from '../logic/brew-check';
+import { continueGame, startGame } from '../logic/brew-check';
+import { loadGame } from '../storage/save';
 import { openLeaderboard, openSettings } from './dialogs';
+
+export const continueButton = document.createElement('button');
+continueButton.textContent = 'Continue Game';
+continueButton.addEventListener('click', continueGame);
 
 export const startButton = document.createElement('button');
 startButton.classList.add('start-button');
@@ -19,4 +24,5 @@ export function renderStartButton({ status }: IGameState) {
   startButton.hidden = status !== 'menu';
   leaderboardButton.hidden = status !== 'menu';
   settingsButton.hidden = status !== 'menu';
+  continueButton.hidden = status !== 'menu' || loadGame() === null;
 }
