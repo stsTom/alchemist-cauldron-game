@@ -40,6 +40,7 @@ export interface IGameState {
   isScoreSubmitted?: boolean;
   isSettingsOpen?: boolean;
   difficulty: Difficulty;
+  reactionIds: string[]; // enabled for the current round
   lastReactionId?: string | null; // Level 3+
 }
 
@@ -52,6 +53,7 @@ export type ISavedGame = Pick<
   | 'activeRecipe'
   | 'cauldronIngredients'
   | 'shelfStock'
+  | 'reactionIds'
   | 'status'
 >;
 

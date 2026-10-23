@@ -22,6 +22,7 @@ export function createMenuState(difficulty: Difficulty = DEFAULT_DIFFICULTY): IG
     isScoreSubmitted: false,
     isSettingsOpen: false,
     difficulty,
+    reactionIds: [],
   };
 }
 

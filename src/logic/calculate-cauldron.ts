@@ -1,6 +1,5 @@
 import type { IIngredient, IMeasurements, IReaction, IRecipeRange } from '../shared/types';
 import INGREDIENTS from '../data/ingredients.json';
-import { REACTIONS } from '../data/reactions';
 import { gameState, getSettings } from '../state/game-state';
 
 export function isInRange(value: number, { min, max }: IRecipeRange) {
@@ -13,7 +12,7 @@ export function getIngredientById(id: string) {
 
 export function getMeasurements(
   cauldronIngredients: IIngredient[],
-  reactions: IReaction[] = REACTIONS,
+  reactions: IReaction[],
 ): IMeasurements {
   const base = cauldronIngredients.reduce(
     (total, ingredient) => ({

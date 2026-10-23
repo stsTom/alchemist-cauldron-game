@@ -1,6 +1,19 @@
 import type { IGameState } from '../shared/types';
 import { getDifficultySettings } from '../shared/difficulty';
 import { brew } from '../logic/brew-check';
+import { getReactionsByIds } from '../logic/reactions';
+
+export const reactionsUi = document.createElement('ul');
+reactionsUi.classList.add('reactions');
+
+export function renderReactions({ reactionIds }: IGameState) {
+  const items = getReactionsByIds(reactionIds).map(({ name, description }) => {
+    const item = document.createElement('li');
+    item.textContent = `${name}: ${description}`;
+    return item;
+  });
+  reactionsUi.replaceChildren(...items);
+}
 
 export const cauldronUi = document.createElement('div');
 cauldronUi.classList.add('cauldron');
