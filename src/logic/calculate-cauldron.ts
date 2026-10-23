@@ -1,12 +1,7 @@
-import type { IIngredient, IRecipeRange } from '../shared/types';
+import type { IIngredient, IMeasurements, IReaction, IRecipeRange } from '../shared/types';
 import INGREDIENTS from '../data/ingredients.json';
+import { REACTIONS } from '../data/reactions';
 import { gameState, getSettings } from '../state/game-state';
-
-export interface IMeasurements {
-  temperature: number;
-  density: number;
-  magicPower: number;
-}
 
 export function isInRange(value: number, { min, max }: IRecipeRange) {
   return value >= min && value <= max;
@@ -16,8 +11,11 @@ export function getIngredientById(id: string) {
   return (INGREDIENTS as IIngredient[]).find((ingredient) => ingredient.id === id);
 }
 
-export function getMeasurements(cauldronIngredients: IIngredient[]): IMeasurements {
-  return cauldronIngredients.reduce(
+export function getMeasurements(
+  cauldronIngredients: IIngredient[],
+  reactions: IReaction[] = REACTIONS,
+): IMeasurements {
+  const base = cauldronIngredients.reduce(
     (total, ingredient) => ({
       temperature: total.temperature + ingredient.temperature,
       density: total.density + ingredient.density,
@@ -25,6 +23,16 @@ export function getMeasurements(cauldronIngredients: IIngredient[]): IMeasuremen
     }),
     { temperature: 0, density: 0, magicPower: 0 },
   );
+
+  const { temperature, density, magicPower } = reactions
+    .filter((reaction) => reaction.isActive(cauldronIngredients))
+    .reduce((values, reaction) => reaction.apply(values), base);
+
+  return {
+    temperature: Math.round(temperature),
+    density: Math.round(density),
+    magicPower: Math.round(magicPower),
+  };
 }
 
 export function addToCauldron(ingredientId: string) {
