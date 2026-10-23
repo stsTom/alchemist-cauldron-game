@@ -1,5 +1,6 @@
 import type { IGameState } from '../shared/types';
 import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
+import { getReactionsByIds } from '../logic/reactions';
 import { formatTime, pauseGame } from '../logic/timer';
 import { LOW_TIME_THRESHOLD } from '../shared/constants';
 
@@ -11,7 +12,7 @@ const densityUi = document.createElement('div');
 const magicPowerUi = document.createElement('div');
 measurementsSection.append(temperatureUi, densityUi, magicPowerUi);
 
-export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameState) {
+export function renderMeasurements({ activeRecipe, cauldronIngredients, reactionIds }: IGameState) {
   if (!activeRecipe) {
     temperatureUi.textContent = '';
     densityUi.textContent = '';
@@ -21,7 +22,7 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients }: IGameS
   }
 
   const { temperature, density, magicPower } = activeRecipe;
-  const measurements = getMeasurements(cauldronIngredients);
+  const measurements = getMeasurements(cauldronIngredients, getReactionsByIds(reactionIds));
 
   temperatureUi.classList.toggle('in-range', isInRange(measurements.temperature, temperature));
   densityUi.classList.toggle('in-range', isInRange(measurements.density, density));

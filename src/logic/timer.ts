@@ -54,6 +54,11 @@ export function startTimer() {
   updateTimer();
 }
 
+export function removeTime(ms: number) {
+  endTime -= ms;
+  updateTimer();
+}
+
 export function addTimeBonus() {
   const { timeBonus, startingTime } = getSettings();
   endTime = Math.min(endTime + timeBonus, Date.now() + startingTime);
