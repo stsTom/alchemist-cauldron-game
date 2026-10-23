@@ -6,10 +6,11 @@ import { getReactionsByIds } from '../logic/reactions';
 export const reactionsUi = document.createElement('ul');
 reactionsUi.classList.add('reactions');
 
-export function renderReactions({ reactionIds }: IGameState) {
-  const items = getReactionsByIds(reactionIds).map(({ name, description }) => {
+export function renderReactions({ reactionIds, cauldronIngredients }: IGameState) {
+  const items = getReactionsByIds(reactionIds).map(({ name, description, isActive }) => {
     const item = document.createElement('li');
     item.textContent = `${name}: ${description}`;
+    item.classList.toggle('active', isActive(cauldronIngredients));
     return item;
   });
   reactionsUi.replaceChildren(...items);

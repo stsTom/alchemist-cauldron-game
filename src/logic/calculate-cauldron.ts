@@ -1,6 +1,7 @@
 import type { IIngredient, IMeasurements, IReaction, IRecipeRange } from '../shared/types';
 import INGREDIENTS from '../data/ingredients.json';
 import { gameState, getSettings } from '../state/game-state';
+import { applyReactionEffects, getFiredReactions } from './reactions';
 
 export function isInRange(value: number, { min, max }: IRecipeRange) {
   return value >= min && value <= max;
@@ -35,7 +36,7 @@ export function getMeasurements(
 }
 
 export function addToCauldron(ingredientId: string) {
-  const { status, shelfStock, cauldronIngredients } = gameState.get();
+  const { status, shelfStock, cauldronIngredients, reactionIds } = gameState.get();
   if (status !== 'playing') return;
 
   const ingredient = getIngredientById(ingredientId);
@@ -44,8 +45,13 @@ export function addToCauldron(ingredientId: string) {
   if (!ingredient || stock <= 0) return;
   if (cauldronIngredients.length >= getSettings().maxCauldron) return;
 
+  const after = [...cauldronIngredients, ingredient];
+  const fired = getFiredReactions(cauldronIngredients, after, reactionIds);
+
   gameState.set({
     shelfStock: { ...shelfStock, [ingredientId]: stock - 1 },
-    cauldronIngredients: [...cauldronIngredients, ingredient],
+    cauldronIngredients: after,
   });
+
+  fired.forEach(applyReactionEffects);
 }
