@@ -13,10 +13,12 @@ startButton.textContent = 'Start Game';
 startButton.addEventListener('click', startGame);
 
 export const leaderboardButton = document.createElement('button');
+leaderboardButton.classList.add('leaderboard-button');
 leaderboardButton.textContent = 'Leaderboard';
 leaderboardButton.addEventListener('click', openLeaderboard);
 
 export const settingsButton = document.createElement('button');
+settingsButton.classList.add('settings-button');
 settingsButton.textContent = 'Settings';
 settingsButton.addEventListener('click', openSettings);
 
