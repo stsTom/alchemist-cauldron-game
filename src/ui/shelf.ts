@@ -18,6 +18,22 @@ function createTooltipLine(label: string, value: number) {
   return line;
 }
 
+function placeTooltip(card: HTMLElement) {
+  const tooltip = card.querySelector<HTMLElement>('.tooltip');
+  if (!tooltip) return;
+
+  const rect = card.getBoundingClientRect();
+  tooltip.classList.toggle('tooltip--left', rect.right + tooltip.offsetWidth > window.innerWidth);
+  tooltip.classList.toggle('tooltip--up', rect.top + tooltip.offsetHeight > window.innerHeight);
+}
+
+function placeAllTooltips() {
+  shelfSection.querySelectorAll<HTMLElement>('.ingredient-card').forEach(placeTooltip);
+}
+
+window.addEventListener('resize', placeAllTooltips);
+window.addEventListener('scroll', placeAllTooltips);
+
 export function renderShelf({ shelfStock }: IGameState) {
   if (shelfStock === renderedStock) return;
   renderedStock = shelfStock;
@@ -37,10 +53,6 @@ export function renderShelf({ shelfStock }: IGameState) {
     name.classList.add('ingredient-name');
     name.textContent = ingredient.name;
 
-    const stockUi = document.createElement('span');
-    stockUi.classList.add('ingredient-stock');
-    stockUi.textContent = `×${stock}`;
-
     const tooltip = document.createElement('div');
     tooltip.classList.add('tooltip');
     tooltip.append(
@@ -49,10 +61,11 @@ export function renderShelf({ shelfStock }: IGameState) {
       createTooltipLine('Magic Power', ingredient.magicPower),
     );
 
-    ingredientUi.append(icon, name, stockUi, tooltip);
+    ingredientUi.append(icon, name, tooltip);
     ingredientUi.draggable = stock > 0;
     ingredientUi.classList.toggle('empty', stock <= 0);
     ingredientUi.addEventListener('click', () => addToCauldron(id));
+    ingredientUi.addEventListener('mouseenter', () => placeTooltip(ingredientUi));
     ingredientUi.addEventListener('dragstart', (event) => {
       if (!event.dataTransfer) return;
       event.dataTransfer.setData('text/plain', id);
@@ -63,4 +76,5 @@ export function renderShelf({ shelfStock }: IGameState) {
   });
 
   shelfSection.replaceChildren(...cards);
+  placeAllTooltips();
 }

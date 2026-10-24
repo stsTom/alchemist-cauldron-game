@@ -35,6 +35,7 @@
 .ingredient-card {
   position: relative;
   display: flex;
+  width: fit-content;
   gap: 0.5rem;
   cursor: grab;
 }
@@ -49,7 +50,7 @@
   top: 0;
   left: 100%;
   z-index: 100;
-  display: none;
+  visibility: hidden;
   padding: 0.25rem 0.5rem;
   border: 1px solid #616161;
   border-radius: 4px;
@@ -63,12 +64,22 @@
   margin: 0;
 }
 
+.tooltip--left {
+  left: auto;
+  right: 100%;
+}
+
+.tooltip--up {
+  top: auto;
+  bottom: 0;
+}
+
 .ingredient-card:hover .tooltip {
-  display: block;
+  visibility: visible;
 }
 
 .play-field.paused .tooltip {
-  display: none;
+  visibility: hidden;
 }
 
 .cauldron {
