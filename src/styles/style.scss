@@ -33,12 +33,42 @@
 }
 
 .ingredient-card {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
   cursor: grab;
 }
 
 .ingredient-card.empty {
   color: #9e9e9e;
   cursor: default;
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 100;
+  display: none;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #616161;
+  border-radius: 4px;
+  background: #fff;
+  color: #212121;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tooltip p {
+  margin: 0;
+}
+
+.ingredient-card:hover .tooltip {
+  display: block;
+}
+
+.play-field.paused .tooltip {
+  display: none;
 }
 
 .cauldron {
