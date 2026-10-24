@@ -33,12 +33,53 @@
 }
 
 .ingredient-card {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  gap: 0.5rem;
   cursor: grab;
 }
 
 .ingredient-card.empty {
   color: #9e9e9e;
   cursor: default;
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 100;
+  visibility: hidden;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #616161;
+  border-radius: 4px;
+  background: #fff;
+  color: #212121;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tooltip p {
+  margin: 0;
+}
+
+.tooltip--left {
+  left: auto;
+  right: 100%;
+}
+
+.tooltip--up {
+  top: auto;
+  bottom: 0;
+}
+
+.ingredient-card:hover .tooltip {
+  visibility: visible;
+}
+
+.play-field.paused .tooltip {
+  visibility: hidden;
 }
 
 .cauldron {
