@@ -24,7 +24,25 @@
 .bar-track {
   position: relative;
   height: 1rem;
+  margin-top: 1.5rem;
   border: 1px solid currentColor;
+}
+
+.bar-marker {
+  position: absolute;
+  top: -0.25rem;
+  bottom: -0.25rem;
+  width: 2px;
+  translate: -50% 0;
+  background: currentColor;
+  transition: left 0.4s ease-out;
+}
+
+.bar-value {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
 }
 
 .bar-zone {
@@ -47,6 +65,7 @@
 }
 
 .no-recipe .bar-zone,
+.no-recipe .bar-marker,
 .no-recipe .bar-scale {
   visibility: hidden;
 }

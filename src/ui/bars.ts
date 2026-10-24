@@ -18,15 +18,18 @@ function createBar(label: string) {
   const title = create('span', 'bar-label');
   const track = create('div', 'bar-track');
   const zone = create('div', 'bar-zone');
+  const marker = create('div', 'bar-marker');
+  const value = create('span', 'bar-value');
   const scale = create('div', 'bar-scale');
   const [scaleMin, scaleMax] = [create('span', 'bar-scale-end'), create('span', 'bar-scale-end')];
   const [zoneMin, zoneMax] = [create('span', 'bar-zone-label'), create('span', 'bar-zone-label')];
 
   title.textContent = label;
-  track.append(zone);
+  marker.append(value);
+  track.append(zone, marker);
   scale.append(scaleMin, zoneMin, zoneMax, scaleMax);
   root.append(title, track, scale);
-  return { root, zone, zoneMin, zoneMax, scaleMin, scaleMax };
+  return { root, zone, marker, value, zoneMin, zoneMax, scaleMin, scaleMax };
 }
 
 const bars: Record<keyof IMeasurements, ReturnType<typeof createBar>> = {
@@ -41,10 +44,17 @@ function toPercent(value: number, { min, max }: IRecipeRange) {
   return Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
 }
 
-function renderBar(bar: ReturnType<typeof createBar>, range: IRecipeRange, scale: IRecipeRange) {
+function renderBar(
+  bar: ReturnType<typeof createBar>,
+  current: number,
+  range: IRecipeRange,
+  scale: IRecipeRange,
+) {
   const left = toPercent(range.min, scale);
   const right = toPercent(range.max, scale);
 
+  bar.marker.style.left = `${toPercent(current, scale)}%`;
+  bar.value.textContent = String(current);
   bar.zone.style.left = `${left}%`;
   bar.zone.style.width = `${right - left}%`;
   bar.zoneMin.style.left = `${left}%`;
@@ -67,7 +77,7 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients, reaction
 
   barKeys.forEach((key) => {
     const range = activeRecipe[key];
-    renderBar(bars[key], range, MEASUREMENT_SCALES[key]);
+    renderBar(bars[key], measurements[key], range, MEASUREMENT_SCALES[key]);
     bars[key].root.classList.toggle('in-range', isInRange(measurements[key], range));
   });
 }
