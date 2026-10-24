@@ -8,7 +8,7 @@
   user-select: none;
 }
 
-.measurements-section > div {
+.bar {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   transition:
@@ -16,9 +16,39 @@
     box-shadow 0.2s;
 }
 
-.measurements-section > .in-range {
+.bar.in-range {
   color: #2e7d32;
   box-shadow: 0 0 8px 2px rgb(76 175 80 / 0.7);
+}
+
+.bar-track {
+  position: relative;
+  height: 1rem;
+  border: 1px solid currentColor;
+}
+
+.bar-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgb(76 175 80 / 0.4);
+}
+
+.bar-scale {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  height: 1.25rem;
+}
+
+.bar-zone-label {
+  position: absolute;
+  translate: -50% 0;
+}
+
+.no-recipe .bar-zone,
+.no-recipe .bar-scale {
+  visibility: hidden;
 }
 
 .timer.low-time {

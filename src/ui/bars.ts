@@ -1,36 +1,75 @@
-import type { IGameState } from '../shared/types';
+import type { IGameState, IMeasurements, IRecipeRange } from '../shared/types';
 import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { getReactionsByIds } from '../logic/reactions';
 import { formatTime, pauseGame } from '../logic/timer';
-import { LOW_TIME_THRESHOLD } from '../shared/constants';
+import { LOW_TIME_THRESHOLD, MEASUREMENT_SCALES } from '../shared/constants';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
 
-const temperatureUi = document.createElement('div');
-const densityUi = document.createElement('div');
-const magicPowerUi = document.createElement('div');
-measurementsSection.append(temperatureUi, densityUi, magicPowerUi);
+function create<K extends keyof HTMLElementTagNameMap>(tag: K, className: string) {
+  const element = document.createElement(tag);
+  element.classList.add(className);
+  return element;
+}
+
+function createBar(label: string) {
+  const root = create('div', 'bar');
+  const title = create('span', 'bar-label');
+  const track = create('div', 'bar-track');
+  const zone = create('div', 'bar-zone');
+  const scale = create('div', 'bar-scale');
+  const [scaleMin, scaleMax] = [create('span', 'bar-scale-end'), create('span', 'bar-scale-end')];
+  const [zoneMin, zoneMax] = [create('span', 'bar-zone-label'), create('span', 'bar-zone-label')];
+
+  title.textContent = label;
+  track.append(zone);
+  scale.append(scaleMin, zoneMin, zoneMax, scaleMax);
+  root.append(title, track, scale);
+  return { root, zone, zoneMin, zoneMax, scaleMin, scaleMax };
+}
+
+const bars: Record<keyof IMeasurements, ReturnType<typeof createBar>> = {
+  temperature: createBar('Temperature'),
+  density: createBar('Density'),
+  magicPower: createBar('Magic Power'),
+};
+const barKeys = Object.keys(bars) as (keyof IMeasurements)[];
+measurementsSection.append(...barKeys.map((key) => bars[key].root));
+
+function toPercent(value: number, { min, max }: IRecipeRange) {
+  return Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+}
+
+function renderBar(bar: ReturnType<typeof createBar>, range: IRecipeRange, scale: IRecipeRange) {
+  const left = toPercent(range.min, scale);
+  const right = toPercent(range.max, scale);
+
+  bar.zone.style.left = `${left}%`;
+  bar.zone.style.width = `${right - left}%`;
+  bar.zoneMin.style.left = `${left}%`;
+  bar.zoneMax.style.left = `${right}%`;
+  bar.zoneMin.textContent = String(range.min);
+  bar.zoneMax.textContent = String(range.max);
+  bar.scaleMin.textContent = String(scale.min);
+  bar.scaleMax.textContent = String(scale.max);
+}
 
 export function renderMeasurements({ activeRecipe, cauldronIngredients, reactionIds }: IGameState) {
+  measurementsSection.classList.toggle('no-recipe', !activeRecipe);
+
   if (!activeRecipe) {
-    temperatureUi.textContent = '';
-    densityUi.textContent = '';
-    magicPowerUi.textContent = '';
-    [temperatureUi, densityUi, magicPowerUi].forEach((ui) => ui.classList.remove('in-range'));
+    barKeys.forEach((key) => bars[key].root.classList.remove('in-range'));
     return;
   }
 
-  const { temperature, density, magicPower } = activeRecipe;
   const measurements = getMeasurements(cauldronIngredients, getReactionsByIds(reactionIds));
 
-  temperatureUi.classList.toggle('in-range', isInRange(measurements.temperature, temperature));
-  densityUi.classList.toggle('in-range', isInRange(measurements.density, density));
-  magicPowerUi.classList.toggle('in-range', isInRange(measurements.magicPower, magicPower));
-
-  temperatureUi.textContent = `min: ${temperature.min}; max: ${temperature.max}; current: ${measurements.temperature}`;
-  densityUi.textContent = `min: ${density.min}; max: ${density.max}; current: ${measurements.density}`;
-  magicPowerUi.textContent = `min: ${magicPower.min}; max: ${magicPower.max}; current: ${measurements.magicPower}`;
+  barKeys.forEach((key) => {
+    const range = activeRecipe[key];
+    renderBar(bars[key], range, MEASUREMENT_SCALES[key]);
+    bars[key].root.classList.toggle('in-range', isInRange(measurements[key], range));
+  });
 }
 
 export const timerUi = document.createElement('div');
