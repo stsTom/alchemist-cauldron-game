@@ -152,45 +152,58 @@ function createRow(cellTag: 'th' | 'td', values: (string | number)[]) {
 const leaderboardDialog = createDialog('leaderboard', 'Leaderboard');
 export const leaderboardUi = leaderboardDialog.root;
 
-const leaderboardTable = document.createElement('table');
-const leaderboardHead = document.createElement('thead');
-const leaderboardRows = document.createElement('tbody');
+const leaderboardLists = document.createElement('div');
+leaderboardLists.classList.add('leaderboard-lists');
 
-leaderboardHead.append(createRow('th', ['Rank', 'Name', 'Score', 'Difficulty', 'Date']));
-leaderboardTable.append(leaderboardHead, leaderboardRows);
+const leaderboardRows = DIFFICULTIES.map((difficulty) => {
+  const section = document.createElement('section');
+  section.classList.add('leaderboard-list');
+
+  const heading = document.createElement('h3');
+  heading.textContent = DIFFICULTY_TEXT[difficulty];
+
+  const table = document.createElement('table');
+  const head = document.createElement('thead');
+  const rows = document.createElement('tbody');
+
+  head.append(createRow('th', ['Rank', 'Name', 'Score', 'Difficulty', 'Date']));
+  table.append(head, rows);
+  section.append(heading, table);
+  leaderboardLists.append(section);
+
+  return { difficulty, rows };
+});
 
 export function openLeaderboard() {
   gameState.set({ isLeaderboardOpen: true });
 }
 
 leaderboardDialog.body.append(
-  leaderboardTable,
+  leaderboardLists,
   createDialogButton('Clear Leaderboard', () => gameState.set({ isClearConfirmOpen: true })),
   createDialogButton('Back', () => gameState.set({ isLeaderboardOpen: false })),
 );
 
-export function renderLeaderboard({
-  isLeaderboardOpen,
-  isClearConfirmOpen,
-  difficulty,
-}: IGameState) {
+export function renderLeaderboard({ isLeaderboardOpen, isClearConfirmOpen }: IGameState) {
   leaderboardUi.hidden = !isLeaderboardOpen || Boolean(isClearConfirmOpen);
   if (leaderboardUi.hidden) return;
 
-  const leaderboard = loadLeaderboard(difficulty);
+  leaderboardRows.forEach(({ difficulty, rows }) => {
+    const leaderboard = loadLeaderboard(difficulty);
 
-  if (leaderboard.length === 0) {
-    const emptyRow = createRow('td', ['No results yet']);
-    emptyRow.cells[0].colSpan = 5;
-    leaderboardRows.replaceChildren(emptyRow);
-    return;
-  }
+    if (leaderboard.length === 0) {
+      const emptyRow = createRow('td', ['No results yet']);
+      emptyRow.cells[0].colSpan = 5;
+      rows.replaceChildren(emptyRow);
+      return;
+    }
 
-  leaderboardRows.replaceChildren(
-    ...leaderboard.map(({ name, score, difficulty: level, date }, index) =>
-      createRow('td', [index + 1, name, score, DIFFICULTY_TEXT[level], formatDate(date)]),
-    ),
-  );
+    rows.replaceChildren(
+      ...leaderboard.map(({ name, score, date }, index) =>
+        createRow('td', [index + 1, name, score, DIFFICULTY_TEXT[difficulty], formatDate(date)]),
+      ),
+    );
+  });
 }
 
 const clearConfirmDialog = createDialog('clear-confirm', 'Clear all results?');
