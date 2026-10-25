@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <rect width="240" height="120" fill="#2a1d14" />
+  <rect y="0" width="240" height="40" fill="#2e2016" />
+  <rect y="80" width="240" height="40" fill="#271b12" />
+  <g fill="none" stroke="#1d140d" stroke-width="2">
+    <line x1="0" y1="40" x2="240" y2="40" />
+    <line x1="0" y1="80" x2="240" y2="80" />
+    <line x1="0" y1="119" x2="240" y2="119" />
+  </g>
+  <g fill="none" stroke="#3a2a1d" stroke-width="1" opacity="0.6">
+    <path d="M0 14 C60 10 120 20 240 12" />
+    <path d="M0 28 C80 32 150 22 240 30" />
+    <path d="M0 54 C70 50 160 60 240 52" />
+    <path d="M0 68 C90 72 140 62 240 70" />
+    <path d="M0 94 C50 90 130 100 240 92" />
+    <path d="M0 108 C100 112 170 102 240 110" />
+    <ellipse cx="170" cy="58" rx="10" ry="4" />
+  </g>
+</svg>
