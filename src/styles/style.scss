@@ -1,3 +1,50 @@
+:root {
+  --wood: #4a3322;
+  --wood-dark: #2a1d14;
+  --wood-light: #6b4a31;
+  --parchment: #e8d9b5;
+  --ink: #2b2118;
+  --potion: #8bc34a;
+  --temp: #e57373;
+  --density: #64b5f6;
+  --magic: #ba68c8;
+  --danger: #e53935;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--wood-dark) url('../assets/table.svg') repeat;
+  color: var(--parchment);
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+button {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--wood-light);
+  border-radius: 4px;
+  background: var(--wood);
+  color: var(--parchment);
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--parchment);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 #app {
   position: relative;
   padding: 1rem;
@@ -29,6 +76,24 @@
 
 .game-title {
   margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+}
+
+.score,
+.timer {
+  justify-self: start;
+  width: fit-content;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--wood-light);
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.3);
+  font-size: 1.25rem;
+}
+
+.timer {
+  margin: 0 auto 0.25rem;
 }
 
 .health,
