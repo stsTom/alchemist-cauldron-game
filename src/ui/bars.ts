@@ -3,6 +3,8 @@ import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { getReactionsByIds } from '../logic/reactions';
 import { formatTime, pauseGame } from '../logic/timer';
 import { LOW_TIME_THRESHOLD, MEASUREMENT_SCALES } from '../shared/constants';
+import { STAT_ICONS } from './icons';
+import markerSrc from '../assets/marker.svg';
 
 export const measurementsSection = document.createElement('section');
 measurementsSection.classList.add('measurements-section');
@@ -13,19 +15,26 @@ function create<K extends keyof HTMLElementTagNameMap>(tag: K, className: string
   return element;
 }
 
-function createBar(label: string) {
+function createBar(key: keyof IMeasurements, label: string) {
   const root = create('div', 'bar');
+  root.classList.add(`bar--${key}`);
   const title = create('span', 'bar-label');
+  const icon = create('img', 'bar-icon');
   const track = create('div', 'bar-track');
   const zone = create('div', 'bar-zone');
   const marker = create('div', 'bar-marker');
+  const markerImage = create('img', 'bar-marker-image');
   const value = create('span', 'bar-value');
   const scale = create('div', 'bar-scale');
   const [scaleMin, scaleMax] = [create('span', 'bar-scale-end'), create('span', 'bar-scale-end')];
   const [zoneMin, zoneMax] = [create('span', 'bar-zone-label'), create('span', 'bar-zone-label')];
 
-  title.textContent = label;
-  marker.append(value);
+  icon.src = STAT_ICONS[key];
+  icon.alt = '';
+  markerImage.src = markerSrc;
+  markerImage.alt = '';
+  title.append(icon, label);
+  marker.append(markerImage, value);
   track.append(zone, marker);
   scale.append(scaleMin, zoneMin, zoneMax, scaleMax);
   root.append(title, track, scale);
@@ -33,9 +42,9 @@ function createBar(label: string) {
 }
 
 const bars: Record<keyof IMeasurements, ReturnType<typeof createBar>> = {
-  temperature: createBar('Temperature'),
-  density: createBar('Density'),
-  magicPower: createBar('Magic Power'),
+  temperature: createBar('temperature', 'Temperature'),
+  density: createBar('density', 'Density'),
+  magicPower: createBar('magicPower', 'Magic Power'),
 };
 const barKeys = Object.keys(bars) as (keyof IMeasurements)[];
 measurementsSection.append(...barKeys.map((key) => bars[key].root));
