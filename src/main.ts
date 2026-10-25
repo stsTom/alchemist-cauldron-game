@@ -4,6 +4,7 @@ import { gameState } from './state/game-state';
 import { pauseGame } from './logic/timer';
 import { clearSave, saveGame } from './storage/save';
 import { renderShelf, shelfSection } from './ui/shelf';
+import { recipeUi, renderRecipe } from './ui/recipe';
 import {
   healthUi,
   measurementsSection,
@@ -53,25 +54,43 @@ const gamePage = document.querySelector('main');
 
 const recipeSeciton = document.createElement('section');
 recipeSeciton.classList.add('recipeSeciton');
-recipeSeciton.append(reactionsUi);
+recipeSeciton.append(recipeUi, reactionsUi);
+
+const gameTitle = document.createElement('h1');
+gameTitle.classList.add('game-title');
+gameTitle.textContent = "Alchemist's Cauldron";
+
+const headerCenter = document.createElement('div');
+headerCenter.classList.add('header-center');
+headerCenter.append(timerUi, gameTitle);
+
+const header = document.createElement('header');
+header.classList.add('game-header');
+header.append(scoreUi, headerCenter, healthUi, leaderboardButton);
+
+const shelfArea = document.createElement('aside');
+shelfArea.classList.add('shelf-area');
+shelfArea.append(shelfSection);
+
+const stage = document.createElement('section');
+stage.classList.add('stage');
+stage.append(cauldronUi, pourOutButton);
+
+const recipeArea = document.createElement('aside');
+recipeArea.classList.add('recipe-area');
+recipeArea.append(recipeSeciton);
+
+const footerCenter = document.createElement('div');
+footerCenter.classList.add('footer-center');
+footerCenter.append(brewButton, startButton, continueButton);
+
+const footer = document.createElement('footer');
+footer.classList.add('game-footer');
+footer.append(footerCenter, pauseButton, settingsButton);
 
 const playField = document.createElement('div');
 playField.classList.add('play-field');
-playField.append(
-  timerUi,
-  scoreUi,
-  shelfSection,
-  recipeSeciton,
-  measurementsSection,
-  cauldronUi,
-  healthUi,
-  brewButton,
-  pourOutButton,
-  continueButton,
-  startButton,
-  leaderboardButton,
-  settingsButton,
-);
+playField.append(header, shelfArea, stage, recipeArea, measurementsSection, footer);
 
 function renderPlayField({ status, isHelpOpen, isLeaderboardOpen, isSettingsOpen }: IGameState) {
   const isPaused =
@@ -91,6 +110,7 @@ function render(state: IGameState) {
   renderMeasurements(state);
   renderCauldron(state);
   renderReactions(state);
+  renderRecipe(state);
   renderHealth(state);
   renderBrewButton(state);
   renderPourOutButton(state);
@@ -114,7 +134,6 @@ render(gameState.get());
 if (gamePage) {
   gamePage.replaceChildren(
     helpButton,
-    pauseButton,
     playField,
     gameOverUi,
     pauseUi,

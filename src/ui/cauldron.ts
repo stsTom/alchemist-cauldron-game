@@ -4,6 +4,10 @@ import { brew, pourOut } from '../logic/brew-check';
 import { getReactionsByIds } from '../logic/reactions';
 import { addToCauldron } from '../logic/calculate-cauldron';
 import { gameState, getSettings } from '../state/game-state';
+import { INGREDIENT_ICONS } from './icons';
+import cauldronSrc from '../assets/cauldron.svg';
+import potionSrc from '../assets/potion.svg';
+import fireSrc from '../assets/fire.svg';
 
 export const reactionsUi = document.createElement('ul');
 reactionsUi.classList.add('reactions');
@@ -18,12 +22,32 @@ export function renderReactions({ reactionIds, cauldronIngredients }: IGameState
   reactionsUi.replaceChildren(...items);
 }
 
+function createImage(src: string, className: string) {
+  const image = document.createElement('img');
+  image.classList.add(className);
+  image.src = src;
+  image.alt = '';
+  return image;
+}
+
 const cauldronCountUi = document.createElement('p');
+cauldronCountUi.classList.add('cauldron-count');
 const cauldronContentsUi = document.createElement('ul');
+cauldronContentsUi.classList.add('cauldron-contents');
+const potionUi = createImage(potionSrc, 'cauldron-potion');
+
+const vesselUi = document.createElement('div');
+vesselUi.classList.add('cauldron-vessel');
+vesselUi.append(
+  createImage(cauldronSrc, 'cauldron-pot'),
+  potionUi,
+  cauldronContentsUi,
+  cauldronCountUi,
+);
 
 export const cauldronUi = document.createElement('section');
 cauldronUi.classList.add('cauldron');
-cauldronUi.append(cauldronCountUi, cauldronContentsUi);
+cauldronUi.append(vesselUi, createImage(fireSrc, 'cauldron-fire'));
 
 function canDrop() {
   const { status, cauldronIngredients } = gameState.get();
@@ -56,12 +80,15 @@ cauldronUi.addEventListener('drop', handleDrop);
 
 export function renderCauldron({ cauldronIngredients, difficulty }: IGameState) {
   const { maxCauldron } = getDifficultySettings(difficulty);
-  cauldronCountUi.textContent = `Cauldron: ${cauldronIngredients.length} / ${maxCauldron}`;
+  cauldronCountUi.textContent = `${cauldronIngredients.length} / ${maxCauldron}`;
   cauldronUi.classList.toggle('full', cauldronIngredients.length >= maxCauldron);
+  potionUi.hidden = cauldronIngredients.length === 0;
+  potionUi.style.scale = String(0.5 + (0.5 * cauldronIngredients.length) / maxCauldron);
 
-  const items = cauldronIngredients.map(({ name }) => {
+  const items = cauldronIngredients.map(({ id, name }) => {
     const item = document.createElement('li');
-    item.textContent = name;
+    item.append(createImage(INGREDIENT_ICONS[id], 'cauldron-item'));
+    item.title = name;
     return item;
   });
   cauldronContentsUi.replaceChildren(...items);

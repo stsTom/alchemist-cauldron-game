@@ -2,8 +2,10 @@ import type { IGameState } from '../shared/types';
 import { continueGame, startGame } from '../logic/brew-check';
 import { loadGame } from '../storage/save';
 import { openLeaderboard, openSettings } from './dialogs';
+import { CONTROL_ICONS, setIconButton } from './icons';
 
 export const continueButton = document.createElement('button');
+continueButton.classList.add('continue-button');
 continueButton.textContent = 'Continue Game';
 continueButton.addEventListener('click', continueGame);
 
@@ -13,11 +15,13 @@ startButton.textContent = 'Start Game';
 startButton.addEventListener('click', startGame);
 
 export const leaderboardButton = document.createElement('button');
+leaderboardButton.classList.add('leaderboard-button');
 leaderboardButton.textContent = 'Leaderboard';
 leaderboardButton.addEventListener('click', openLeaderboard);
 
 export const settingsButton = document.createElement('button');
-settingsButton.textContent = 'Settings';
+settingsButton.classList.add('settings-button');
+setIconButton(settingsButton, CONTROL_ICONS.gear, 'Settings');
 settingsButton.addEventListener('click', openSettings);
 
 export function renderStartButton({ status }: IGameState) {

@@ -1,5 +1,6 @@
-import type { IGameState } from '../shared/types';
+import type { IGameState, IMeasurements } from '../shared/types';
 import { addToCauldron, getIngredientById } from '../logic/calculate-cauldron';
+import { INGREDIENT_ICONS, STAT_ICONS } from './icons';
 
 export const shelfSection = document.createElement('ul');
 shelfSection.classList.add('shelf');
@@ -12,9 +13,21 @@ function formatValue(value: number) {
   return '0';
 }
 
-function createTooltipLine(label: string, value: number) {
+function createTooltipLine(key: keyof IMeasurements, label: string, value: number) {
+  const icon = document.createElement('img');
+  icon.src = STAT_ICONS[key];
+  icon.alt = '';
+
+  const text = document.createElement('span');
+  text.textContent = label;
+
+  const amount = document.createElement('span');
+  amount.classList.add('tooltip-value');
+  amount.textContent = formatValue(value);
+
   const line = document.createElement('p');
-  line.textContent = `${label}: ${formatValue(value)}`;
+  line.classList.add('tooltip-line');
+  line.append(icon, text, amount);
   return line;
 }
 
@@ -23,8 +36,13 @@ function placeTooltip(card: HTMLElement) {
   if (!tooltip) return;
 
   const rect = card.getBoundingClientRect();
-  tooltip.classList.toggle('tooltip--left', rect.right + tooltip.offsetWidth > window.innerWidth);
-  tooltip.classList.toggle('tooltip--up', rect.top + tooltip.offsetHeight > window.innerHeight);
+  const fitsRight = rect.right + tooltip.offsetWidth <= window.innerWidth;
+  const fitsLeft = rect.left - tooltip.offsetWidth >= 0;
+  const isBelow = !fitsRight && !fitsLeft;
+  const top = isBelow ? rect.bottom : rect.top;
+  tooltip.classList.toggle('tooltip--left', !fitsRight && fitsLeft);
+  tooltip.classList.toggle('tooltip--below', isBelow);
+  tooltip.classList.toggle('tooltip--up', top + tooltip.offsetHeight > window.innerHeight);
 }
 
 function placeAllTooltips() {
@@ -45,9 +63,10 @@ export function renderShelf({ shelfStock }: IGameState) {
 
     if (!ingredient) return ingredientUi;
 
-    const icon = document.createElement('span');
+    const icon = document.createElement('img');
     icon.classList.add('ingredient-icon');
-    icon.textContent = ingredient.icon;
+    icon.src = INGREDIENT_ICONS[id];
+    icon.alt = '';
 
     const name = document.createElement('span');
     name.classList.add('ingredient-name');
@@ -55,10 +74,14 @@ export function renderShelf({ shelfStock }: IGameState) {
 
     const tooltip = document.createElement('div');
     tooltip.classList.add('tooltip');
+    const tooltipTitle = document.createElement('p');
+    tooltipTitle.classList.add('tooltip-title');
+    tooltipTitle.textContent = ingredient.name;
     tooltip.append(
-      createTooltipLine('Temperature', ingredient.temperature),
-      createTooltipLine('Density', ingredient.density),
-      createTooltipLine('Magic Power', ingredient.magicPower),
+      tooltipTitle,
+      createTooltipLine('temperature', 'Temperature', ingredient.temperature),
+      createTooltipLine('density', 'Density', ingredient.density),
+      createTooltipLine('magicPower', 'Magic Power', ingredient.magicPower),
     );
 
     ingredientUi.append(icon, name, tooltip);
