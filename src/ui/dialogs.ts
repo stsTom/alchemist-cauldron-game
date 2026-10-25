@@ -46,7 +46,11 @@ function createDialog(className: string, title: string) {
   const body = document.createElement('div');
   body.classList.add('dialog-body');
 
-  root.append(heading, body);
+  const panel = document.createElement('div');
+  panel.classList.add('dialog-panel');
+  panel.append(heading, body);
+
+  root.append(panel);
   return { root, body };
 }
 

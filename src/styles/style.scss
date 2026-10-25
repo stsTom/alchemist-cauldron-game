@@ -130,6 +130,11 @@ button:disabled {
   display: none;
 }
 
+.pause-button[hidden] {
+  display: flex;
+  visibility: hidden;
+}
+
 .icon-button img {
   width: 1.75rem;
   height: 1.75rem;
@@ -199,6 +204,7 @@ button:disabled {
 
 .recipe-area {
   grid-area: recipe;
+  min-height: 22rem;
   padding: 2rem 11% 1.5rem 10%;
   background: url('../assets/book.svg') no-repeat;
   background-size: 100% 100%;
@@ -441,13 +447,37 @@ button:disabled {
   left: 100%;
   z-index: 100;
   visibility: hidden;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #616161;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--wood-light);
   border-radius: 4px;
-  background: #fff;
-  color: #212121;
+  background: var(--wood-dark);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.5);
+  color: var(--parchment);
   white-space: nowrap;
   pointer-events: none;
+}
+
+.tooltip .tooltip-title {
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--wood-light);
+  font-variant: small-caps;
+}
+
+.tooltip-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tooltip-line img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.tooltip-value {
+  margin-left: auto;
+  padding-left: 1rem;
 }
 
 .tooltip p {
@@ -462,6 +492,17 @@ button:disabled {
 .tooltip--up {
   top: auto;
   bottom: 0;
+}
+
+.tooltip--below {
+  top: 100%;
+  right: 1rem;
+  left: auto;
+}
+
+.tooltip--below.tooltip--up {
+  top: auto;
+  bottom: 100%;
 }
 
 .ingredient-card:hover .tooltip {
@@ -549,9 +590,33 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: rgb(0 0 0 / 0.5);
+}
+
+.dialog-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 1rem;
-  background: rgb(0 0 0 / 0.4);
-  color: #fff;
+  max-width: calc(100vw - 2rem);
+  padding: 2rem 2.5rem;
+  background: url('../assets/parchment.svg') no-repeat;
+  background-size: 100% 100%;
+  color: var(--ink);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-variant: small-caps;
+}
+
+.name-form input {
+  padding: 0.4rem;
+  border: 1px solid var(--wood-light);
+  border-radius: 4px;
+  background: #f5ecd6;
+  color: var(--ink);
+  font: inherit;
 }
 
 .dialog[hidden] {
@@ -567,6 +632,7 @@ button:disabled {
 .leaderboard th,
 .leaderboard td {
   padding: 0.25rem 0.75rem;
+  border-bottom: 1px solid rgb(43 33 24 / 0.2);
 }
 
 .dialog-body {
@@ -577,5 +643,59 @@ button:disabled {
 }
 
 .settings [aria-pressed='true'] {
+  border-color: var(--gold);
   font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .play-field {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    grid-template-areas:
+      'header header'
+      'stage stage'
+      'shelf recipe'
+      'measure measure'
+      'footer footer';
+  }
+}
+
+@media (max-width: 600px) {
+  .play-field {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'header' 'stage' 'recipe' 'shelf' 'measure' 'footer';
+  }
+
+  .header-center {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+
+  .measurements-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .game-footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .footer-center {
+    flex-wrap: wrap;
+    grid-column: 1;
+    justify-content: center;
+  }
+
+  .pause-button,
+  .settings-button {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .brew-button,
+  .start-button,
+  .continue-button {
+    padding: 0.4rem 1.25rem;
+    font-size: 1.2rem;
+  }
 }
