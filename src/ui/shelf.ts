@@ -1,5 +1,6 @@
 import type { IGameState } from '../shared/types';
 import { addToCauldron, getIngredientById } from '../logic/calculate-cauldron';
+import { INGREDIENT_ICONS } from './icons';
 
 export const shelfSection = document.createElement('ul');
 shelfSection.classList.add('shelf');
@@ -45,9 +46,10 @@ export function renderShelf({ shelfStock }: IGameState) {
 
     if (!ingredient) return ingredientUi;
 
-    const icon = document.createElement('span');
+    const icon = document.createElement('img');
     icon.classList.add('ingredient-icon');
-    icon.textContent = ingredient.icon;
+    icon.src = INGREDIENT_ICONS[id];
+    icon.alt = '';
 
     const name = document.createElement('span');
     name.classList.add('ingredient-name');
