@@ -93,6 +93,7 @@ export function renderShelf({ shelfStock }: IGameState) {
       if (!event.dataTransfer) return;
       event.dataTransfer.setData('text/plain', id);
       event.dataTransfer.effectAllowed = 'copy';
+      event.dataTransfer.setDragImage(icon, icon.width / 2, icon.height / 2);
     });
 
     return ingredientUi;
