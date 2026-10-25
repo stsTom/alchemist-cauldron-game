@@ -9,7 +9,25 @@ import toadSlime from '../assets/ingredients/toad-slime.svg';
 import temperature from '../assets/stats/temperature.svg';
 import density from '../assets/stats/density.svg';
 import magicPower from '../assets/stats/magic-power.svg';
+import heart from '../assets/controls/heart.svg';
+import heartEmpty from '../assets/controls/heart-empty.svg';
+import clock from '../assets/controls/clock.svg';
+import gear from '../assets/controls/gear.svg';
+import help from '../assets/controls/help.svg';
+import pause from '../assets/controls/pause.svg';
 import type { IMeasurements } from '../shared/types';
+
+export const CONTROL_ICONS = { heart, heartEmpty, clock, gear, help, pause };
+
+export function setIconButton(button: HTMLButtonElement, src: string, caption: string) {
+  const icon = document.createElement('img');
+  icon.src = src;
+  icon.alt = '';
+  const label = document.createElement('span');
+  label.textContent = caption;
+  button.classList.add('icon-button');
+  button.replaceChildren(icon, label);
+}
 
 export const STAT_ICONS: Record<keyof IMeasurements, string> = {
   temperature,

@@ -3,7 +3,8 @@ import { getMeasurements, isInRange } from '../logic/calculate-cauldron';
 import { getReactionsByIds } from '../logic/reactions';
 import { formatTime, pauseGame } from '../logic/timer';
 import { LOW_TIME_THRESHOLD, MEASUREMENT_SCALES } from '../shared/constants';
-import { STAT_ICONS } from './icons';
+import { getDifficultySettings } from '../shared/difficulty';
+import { CONTROL_ICONS, STAT_ICONS, setIconButton } from './icons';
 import markerSrc from '../assets/marker.svg';
 
 export const measurementsSection = document.createElement('section');
@@ -93,9 +94,14 @@ export function renderMeasurements({ activeRecipe, cauldronIngredients, reaction
 
 export const timerUi = document.createElement('div');
 timerUi.classList.add('timer');
+const timerIcon = create('img', 'timer-icon');
+timerIcon.src = CONTROL_ICONS.clock;
+timerIcon.alt = '';
+const timerText = document.createElement('span');
+timerUi.append(timerIcon, timerText);
 
 export function renderTimer({ status, timeLeft }: IGameState) {
-  timerUi.textContent = formatTime(timeLeft);
+  timerText.textContent = formatTime(timeLeft);
   timerUi.classList.toggle('low-time', status === 'playing' && timeLeft < LOW_TIME_THRESHOLD);
 }
 
@@ -108,7 +114,7 @@ export function renderScore({ score }: IGameState) {
 
 export const pauseButton = document.createElement('button');
 pauseButton.classList.add('pause-button');
-pauseButton.textContent = 'Pause';
+setIconButton(pauseButton, CONTROL_ICONS.pause, 'Pause');
 pauseButton.addEventListener('click', pauseGame);
 
 export function renderPauseButton({ status }: IGameState) {
@@ -118,6 +124,20 @@ export function renderPauseButton({ status }: IGameState) {
 export const healthUi = document.createElement('div');
 healthUi.classList.add('health');
 
-export function renderHealth({ lives }: IGameState) {
-  healthUi.textContent = '❤'.repeat(lives);
+let renderedHealth = '';
+
+export function renderHealth({ status, lives, difficulty }: IGameState) {
+  const maxLives = getDifficultySettings(difficulty).lives;
+  healthUi.hidden = status === 'menu';
+  if (renderedHealth === `${lives}/${maxLives}`) return;
+  renderedHealth = `${lives}/${maxLives}`;
+
+  const hearts = Array.from({ length: maxLives }, (_, index) => {
+    const heart = create('img', 'heart');
+    heart.src = index < lives ? CONTROL_ICONS.heart : CONTROL_ICONS.heartEmpty;
+    heart.alt = '';
+    return heart;
+  });
+  healthUi.replaceChildren(...hearts);
+  healthUi.ariaLabel = `Lives: ${lives}`;
 }

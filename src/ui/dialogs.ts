@@ -4,6 +4,7 @@ import { goToMenu, setDifficulty, startGame } from '../logic/brew-check';
 import { DIFFICULTIES } from '../shared/constants';
 import { gameState } from '../state/game-state';
 import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
+import { CONTROL_ICONS, setIconButton } from './icons';
 
 const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
@@ -254,7 +255,7 @@ helpDialog.body.append(helpContent, createDialogButton('Close', closeHelp));
 
 export const helpButton = document.createElement('button');
 helpButton.classList.add('help-button');
-helpButton.textContent = 'Help';
+setIconButton(helpButton, CONTROL_ICONS.help, 'Help');
 helpButton.addEventListener('click', openHelp);
 
 export function renderHelpDialog({ isHelpOpen }: IGameState) {
