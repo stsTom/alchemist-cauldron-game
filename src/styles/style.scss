@@ -629,6 +629,21 @@ button:disabled {
   overflow-y: auto;
 }
 
+.leaderboard-lists {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.leaderboard h3 {
+  margin: 0 0 0.25rem;
+  text-align: center;
+  font-variant: small-caps;
+}
+
 .leaderboard th,
 .leaderboard td {
   padding: 0.25rem 0.75rem;
