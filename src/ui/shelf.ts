@@ -72,6 +72,10 @@ export function renderShelf({ shelfStock }: IGameState) {
     name.classList.add('ingredient-name');
     name.textContent = ingredient.name;
 
+    const stockUi = document.createElement('span');
+    stockUi.classList.add('ingredient-stock');
+    stockUi.textContent = `×${stock}`;
+
     const tooltip = document.createElement('div');
     tooltip.classList.add('tooltip');
     const tooltipTitle = document.createElement('p');
@@ -84,7 +88,7 @@ export function renderShelf({ shelfStock }: IGameState) {
       createTooltipLine('magicPower', 'Magic Power', ingredient.magicPower),
     );
 
-    ingredientUi.append(icon, name, tooltip);
+    ingredientUi.append(icon, name, stockUi, tooltip);
     ingredientUi.draggable = stock > 0;
     ingredientUi.classList.toggle('empty', stock <= 0);
     ingredientUi.addEventListener('click', () => addToCauldron(id));
