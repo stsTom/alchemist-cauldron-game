@@ -126,6 +126,7 @@ button:disabled {
   grid-area: stage;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
 }
 
@@ -318,19 +319,69 @@ button:disabled {
 }
 
 .cauldron {
-  width: 16rem;
-  min-height: 10rem;
-  padding: 0.5rem;
-  border: 1px dashed currentColor;
-  border-radius: 8px;
+  width: clamp(12rem, 24vw, 20rem);
 }
 
-.cauldron.full {
-  color: #e65100;
+.cauldron-vessel {
+  position: relative;
 }
 
-.cauldron.drop-target {
-  color: #2e7d32;
+.cauldron-pot,
+.cauldron-fire {
+  display: block;
+  width: 100%;
+}
+
+.cauldron-pot {
+  transition: filter 0.2s;
+}
+
+.cauldron.drop-target .cauldron-pot {
+  filter: drop-shadow(0 0 8px var(--potion));
+}
+
+.cauldron-potion {
+  position: absolute;
+  top: 15.3%;
+  left: 10%;
+  width: 80%;
+  transition: scale 0.3s;
+}
+
+.cauldron-contents {
+  position: absolute;
+  top: 38%;
+  right: 20%;
+  left: 20%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cauldron-item {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.cauldron-count {
+  position: absolute;
+  right: 0;
+  bottom: 22%;
+  left: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.cauldron.full .cauldron-count {
+  color: #ffb74d;
+}
+
+.pour-out-button {
+  font-size: 0.85rem;
 }
 
 .reactions .active {
