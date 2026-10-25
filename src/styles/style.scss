@@ -132,6 +132,57 @@ button:disabled {
 
 .recipe-area {
   grid-area: recipe;
+  padding: 2rem 11% 1.5rem 10%;
+  background: url('../assets/book.svg') no-repeat;
+  background-size: 100% 100%;
+  color: var(--ink);
+}
+
+.recipe-caption {
+  margin: 0;
+  font-size: 0.8rem;
+  font-variant: small-caps;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.recipe-name {
+  margin: 0.25rem 0 1rem;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.recipe-ranges {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipe-ranges li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgb(43 33 24 / 0.2);
+}
+
+.recipe-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.recipe-value {
+  margin-left: auto;
+}
+
+.recipe-count {
+  margin: 0.75rem 0 0;
+}
+
+.reactions {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
 }
 
 .measurements-section {

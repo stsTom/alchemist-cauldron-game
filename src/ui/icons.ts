@@ -6,6 +6,16 @@ import frostLotus from '../assets/ingredients/frost-lotus.svg';
 import mandrakeRoot from '../assets/ingredients/mandrake-root.svg';
 import phoenixFeather from '../assets/ingredients/phoenix-feather.svg';
 import toadSlime from '../assets/ingredients/toad-slime.svg';
+import temperature from '../assets/stats/temperature.svg';
+import density from '../assets/stats/density.svg';
+import magicPower from '../assets/stats/magic-power.svg';
+import type { IMeasurements } from '../shared/types';
+
+export const STAT_ICONS: Record<keyof IMeasurements, string> = {
+  temperature,
+  density,
+  magicPower,
+};
 
 export const INGREDIENT_ICONS: Record<string, string> = {
   'caustic-acid': causticAcid,
