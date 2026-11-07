@@ -70,6 +70,18 @@ export interface IMeasurements {
   magicPower: number;
 }
 
+export type DuelMessage =
+  | { type: 'create' }
+  | { type: 'created'; code: string }
+  | { type: 'join'; code: string }
+  | { type: 'opponent-joined' }
+  | { type: 'error'; reason: 'room-unavailable' }
+  | { type: 'opponent-left' }
+  | { type: 'start'; difficulty: Difficulty; countdownMs: number }
+  | { type: 'progress'; score: number; lives: number }
+  | { type: 'finished'; score: number; reason: GameOverReason }
+  | { type: 'rematch' };
+
 export interface IReaction {
   id: string;
   name: string;
