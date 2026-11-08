@@ -1,9 +1,10 @@
 import INGREDIENTS from '../data/ingredients.json';
 import { MAX_STOCK, MIN_STOCK } from '../shared/constants';
+import { rng } from '../shared/rng';
 import { gameState, getSettings } from '../state/game-state';
 
 function getRandomStock() {
-  return Math.floor(Math.random() * (MAX_STOCK - MIN_STOCK + 1)) + MIN_STOCK;
+  return Math.floor(rng() * (MAX_STOCK - MIN_STOCK + 1)) + MIN_STOCK;
 }
 
 export function populateShelf() {

@@ -1,13 +1,16 @@
 import type { IIngredient, IReaction } from '../shared/types';
 import { REACTIONS } from '../data/reactions';
+import { rng } from '../shared/rng';
 import { gameState } from '../state/game-state';
 import { endGame, removeTime } from './timer';
 
 export function pickReactionIds(count: number) {
-  return [...REACTIONS]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, count)
-    .map(({ id }) => id);
+  const reactions = [...REACTIONS];
+  for (let i = reactions.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [reactions[i], reactions[j]] = [reactions[j], reactions[i]];
+  }
+  return reactions.slice(0, count).map(({ id }) => id);
 }
 
 export function getReactionsByIds(ids: string[]) {

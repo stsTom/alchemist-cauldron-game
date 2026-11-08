@@ -6,7 +6,7 @@ import { gameState } from '../state/game-state';
 import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 import { CONTROL_ICONS, setIconButton } from './icons';
 
-const REASON_TEXT: Record<GameOverReason, string> = {
+export const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
   'no-lives': 'No lives left',
   'out-of-ingredients': 'Out of ingredients',
@@ -35,7 +35,7 @@ const RULES_STEPS = [
 const RULES_NOTE =
   'Every ingredient has a limited stock. The number on the shelf card shows how many portions are left';
 
-function createDialog(className: string, title: string) {
+export function createDialog(className: string, title: string) {
   const root = document.createElement('section');
   root.classList.add('dialog', className);
   root.hidden = true;
@@ -54,7 +54,7 @@ function createDialog(className: string, title: string) {
   return { root, body };
 }
 
-function createDialogButton(label: string, onClick: () => void) {
+export function createDialogButton(label: string, onClick: () => void) {
   const button = document.createElement('button');
   button.textContent = label;
   button.addEventListener('click', onClick);
@@ -116,10 +116,11 @@ export function renderGameOverDialog({
   difficulty,
   isLeaderboardOpen,
   isScoreSubmitted,
+  mode,
 }: IGameState) {
   if (status !== 'game-over') resetNameForm();
 
-  gameOverUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen);
+  gameOverUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen) || mode === 'duel';
   if (gameOverUi.hidden) return;
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';

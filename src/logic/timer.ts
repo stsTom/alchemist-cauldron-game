@@ -27,7 +27,8 @@ export function endGame(reason: GameOverReason) {
 }
 
 export function pauseGame() {
-  if (gameState.get().status !== 'playing') return;
+  const { status, mode } = gameState.get();
+  if (status !== 'playing' || mode === 'duel') return;
   stopTimer();
   gameState.set({ status: 'paused' });
 }
