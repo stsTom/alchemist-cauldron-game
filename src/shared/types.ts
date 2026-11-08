@@ -10,6 +10,7 @@ export interface IDuelState {
   code: string;
   phase: DuelPhase;
   error?: string | null;
+  gameNumber: number;
   opponentScore: number;
   opponentLives: number;
   opponentFinished: boolean;

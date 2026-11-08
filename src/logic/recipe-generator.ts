@@ -1,6 +1,7 @@
 import type { Difficulty, IRecipe, IRecipeRange } from '../shared/types';
 import RECIPES from '../data/recipes.json';
 import { getDifficultySettings } from '../shared/difficulty';
+import { rng } from '../shared/rng';
 
 function widenRange({ min, max }: IRecipeRange, tolerance: number): IRecipeRange {
   return { min: min - tolerance, max: max + tolerance };
@@ -8,7 +9,7 @@ function widenRange({ min, max }: IRecipeRange, tolerance: number): IRecipeRange
 
 export function getRandomRecipe(difficulty: Difficulty): IRecipe {
   const recipes = RECIPES[difficulty];
-  const recipe = recipes[Math.round(Math.random() * (recipes.length - 1))] as IRecipe;
+  const recipe = recipes[Math.floor(rng() * recipes.length)] as IRecipe;
   const { tolerance } = getDifficultySettings(difficulty);
 
   return {

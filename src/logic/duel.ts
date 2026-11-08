@@ -1,6 +1,7 @@
 import type { Difficulty, DuelMessage, DuelRole, IDuelState, IGameState } from '../shared/types';
 import { send } from '../net/socket';
 import { getDifficultySettings } from '../shared/difficulty';
+import { setSeed } from '../shared/rng';
 import { gameState } from '../state/game-state';
 import { startGame } from './brew-check';
 import { stopTimer } from './timer';
@@ -14,6 +15,7 @@ export function createDuelState(role: DuelRole): IDuelState {
     role,
     code: '',
     phase: role === 'host' ? 'connecting' : 'code-input',
+    gameNumber: 0,
     opponentScore: 0,
     opponentLives: 0,
     opponentFinished: false,
@@ -29,12 +31,18 @@ export function setDuel(patch: Partial<IDuelState>) {
 }
 
 function beginGame(difficulty: Difficulty) {
+  const { duel } = gameState.get();
+  if (!duel) return;
+
   sentScore = null;
   sentLives = null;
+  const gameNumber = duel.gameNumber + 1;
+  setSeed(`${duel.code}-${gameNumber}`);
 
   gameState.set({ difficulty });
   setDuel({
     phase: 'playing',
+    gameNumber,
     opponentScore: 0,
     opponentLives: getDifficultySettings(difficulty).lives,
     opponentFinished: false,

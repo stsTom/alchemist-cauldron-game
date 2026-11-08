@@ -1,6 +1,7 @@
 import type { DuelMessage } from '../shared/types';
 import { connect, disconnect, onClose, onMessage, send } from '../net/socket';
 import { createMenuState, gameState } from '../state/game-state';
+import { setSeed } from '../shared/rng';
 import { stopTimer } from './timer';
 import { createDuelState, handleGameMessage, opponentLeftDuringGame, setDuel } from './duel';
 
@@ -68,7 +69,7 @@ function handleMessage(msg: DuelMessage) {
       setDuel({ code: msg.code, phase: 'waiting' });
       break;
     case 'opponent-joined':
-      setDuel({ phase: 'ready' });
+      setDuel({ phase: 'ready', gameNumber: 0 });
       break;
     case 'error':
       stopListening();
@@ -92,6 +93,7 @@ function endDuel(notice: string | null) {
   stopListening();
   disconnect();
   stopTimer();
+  setSeed(null);
   gameState.set({ ...createMenuState(gameState.get().difficulty), duelNotice: notice });
 }
 
