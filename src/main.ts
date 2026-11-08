@@ -52,6 +52,7 @@ import {
   startButton,
 } from './ui/menu';
 import { lobbyUi, noticeUi, renderDuelNotice, renderLobby } from './ui/lobby';
+import { opponentUi, renderDuelResult, renderOpponent, resultUi } from './ui/duel';
 
 const gamePage = document.querySelector('main');
 
@@ -65,7 +66,7 @@ gameTitle.textContent = "Alchemist's Cauldron";
 
 const headerCenter = document.createElement('div');
 headerCenter.classList.add('header-center');
-headerCenter.append(timerUi, gameTitle);
+headerCenter.append(timerUi, gameTitle, opponentUi);
 
 const header = document.createElement('header');
 header.classList.add('game-header');
@@ -108,7 +109,7 @@ function renderPlayField({
     Boolean(isHelpOpen) ||
     Boolean(isLeaderboardOpen) ||
     Boolean(isSettingsOpen) ||
-    duel !== null ||
+    (duel !== null && duel.phase !== 'playing') ||
     Boolean(duelNotice);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
@@ -136,10 +137,13 @@ function render(state: IGameState) {
   renderSettings(state);
   renderLobby(state);
   renderDuelNotice(state);
+  renderOpponent(state);
+  renderDuelResult(state);
 }
 
 gameState.subscribe(render);
 gameState.subscribe((state) => {
+  if (state.mode === 'duel') return;
   if (state.status === 'playing' || state.status === 'paused') saveGame(state);
   if (state.status === 'game-over') clearSave();
 });
@@ -157,6 +161,7 @@ if (gamePage) {
     settingsUi,
     lobbyUi,
     noticeUi,
+    resultUi,
   );
 }
 

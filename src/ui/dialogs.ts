@@ -6,7 +6,7 @@ import { gameState } from '../state/game-state';
 import { addScore, clearLeaderboard, isTopScore, loadLeaderboard } from '../storage/leaderboard';
 import { CONTROL_ICONS, setIconButton } from './icons';
 
-const REASON_TEXT: Record<GameOverReason, string> = {
+export const REASON_TEXT: Record<GameOverReason, string> = {
   'time-up': 'Time is up',
   'no-lives': 'No lives left',
   'out-of-ingredients': 'Out of ingredients',
@@ -116,10 +116,11 @@ export function renderGameOverDialog({
   difficulty,
   isLeaderboardOpen,
   isScoreSubmitted,
+  mode,
 }: IGameState) {
   if (status !== 'game-over') resetNameForm();
 
-  gameOverUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen);
+  gameOverUi.hidden = status !== 'game-over' || Boolean(isLeaderboardOpen) || mode === 'duel';
   if (gameOverUi.hidden) return;
 
   gameOverReason.textContent = reason ? REASON_TEXT[reason] : '';

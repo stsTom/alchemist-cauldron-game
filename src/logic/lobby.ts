@@ -1,17 +1,14 @@
-import type { DuelMessage, IDuelState } from '../shared/types';
+import type { DuelMessage } from '../shared/types';
 import { connect, disconnect, onClose, onMessage, send } from '../net/socket';
-import { gameState } from '../state/game-state';
+import { createMenuState, gameState } from '../state/game-state';
+import { stopTimer } from './timer';
+import { createDuelState, handleGameMessage, opponentLeftDuringGame, setDuel } from './duel';
 
 const CONNECT_TIMEOUT_MS = 60_000;
 const CONNECT_ERROR = 'Could not connect to the server';
 
 let unsubscribers: (() => void)[] = [];
 let pending: object | null = null;
-
-function setDuel(patch: Partial<IDuelState>) {
-  const { duel } = gameState.get();
-  if (duel) gameState.set({ duel: { ...duel, ...patch } });
-}
 
 async function connectWithTimeout(): Promise<boolean> {
   const token = {};
@@ -49,6 +46,19 @@ function stopListening() {
   unsubscribers = [];
 }
 
+function handleOpponentLeft() {
+  const { duel } = gameState.get();
+  if (!duel) return;
+
+  if (duel.phase === 'playing') {
+    opponentLeftDuringGame();
+    return;
+  }
+
+  if (duel.role === 'host') setDuel({ phase: 'waiting' });
+  else endDuel('Host left');
+}
+
 function handleMessage(msg: DuelMessage) {
   const { duel } = gameState.get();
   if (!duel) return;
@@ -66,8 +76,13 @@ function handleMessage(msg: DuelMessage) {
       setDuel({ phase: 'code-input', error: 'Room not found or full' });
       break;
     case 'opponent-left':
-      if (duel.role === 'host') setDuel({ phase: 'waiting' });
-      else endDuel('Host left');
+      handleOpponentLeft();
+      break;
+    case 'start':
+    case 'progress':
+    case 'finished':
+    case 'rematch':
+      handleGameMessage(msg);
       break;
   }
 }
@@ -76,11 +91,12 @@ function endDuel(notice: string | null) {
   pending = null;
   stopListening();
   disconnect();
-  gameState.set({ mode: 'solo', duel: null, duelNotice: notice });
+  stopTimer();
+  gameState.set({ ...createMenuState(gameState.get().difficulty), duelNotice: notice });
 }
 
 export async function createDuel() {
-  gameState.set({ mode: 'duel', duel: { role: 'host', code: '', phase: 'connecting' } });
+  gameState.set({ mode: 'duel', duel: createDuelState('host') });
   try {
     if (!(await connectWithTimeout())) return;
   } catch {
@@ -92,7 +108,7 @@ export async function createDuel() {
 }
 
 export function openJoin() {
-  gameState.set({ mode: 'duel', duel: { role: 'guest', code: '', phase: 'code-input' } });
+  gameState.set({ mode: 'duel', duel: createDuelState('guest') });
 }
 
 export async function joinDuel(code: string) {

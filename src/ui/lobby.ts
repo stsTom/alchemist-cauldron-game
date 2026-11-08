@@ -1,5 +1,6 @@
 import type { DuelPhase, IGameState } from '../shared/types';
 import { copyCode, joinDuel, leaveDuel } from '../logic/lobby';
+import { startDuel } from '../logic/duel';
 import { gameState } from '../state/game-state';
 import { createDialog, createDialogButton } from './dialogs';
 
@@ -11,6 +12,7 @@ const STATUS_TEXT: Record<DuelPhase, string> = {
   waiting: 'Waiting for opponent…',
   joining: 'Joining…',
   ready: 'Opponent connected',
+  playing: '',
 };
 
 const lobbyDialog = createDialog('lobby', 'Duel');
@@ -49,8 +51,7 @@ joinForm.addEventListener('submit', (event) => {
   if (codeInput.value.length === CODE_LENGTH) joinDuel(codeInput.value);
 });
 
-const duelStartButton = createDialogButton('Start', () => {});
-duelStartButton.disabled = true;
+const duelStartButton = createDialogButton('Start', startDuel);
 
 lobbyDialog.body.append(
   lobbyStatus,
@@ -61,7 +62,7 @@ lobbyDialog.body.append(
 );
 
 export function renderLobby({ duel }: IGameState) {
-  lobbyUi.hidden = duel === null;
+  lobbyUi.hidden = !duel || duel.phase === 'playing';
   if (!duel) {
     codeInput.value = '';
     joinButton.disabled = true;

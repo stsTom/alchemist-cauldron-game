@@ -3,13 +3,19 @@ export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
 export type GameOverReason = 'time-up' | 'no-lives' | 'out-of-ingredients';
 export type GameMode = 'solo' | 'duel';
 export type DuelRole = 'host' | 'guest';
-export type DuelPhase = 'code-input' | 'connecting' | 'waiting' | 'joining' | 'ready';
+export type DuelPhase = 'code-input' | 'connecting' | 'waiting' | 'joining' | 'ready' | 'playing';
 
 export interface IDuelState {
   role: DuelRole;
   code: string;
   phase: DuelPhase;
   error?: string | null;
+  opponentScore: number;
+  opponentLives: number;
+  opponentFinished: boolean;
+  opponentLeft: boolean;
+  wantsRematch: boolean;
+  opponentWantsRematch: boolean;
 }
 
 export interface IIngredient {
@@ -90,7 +96,7 @@ export type DuelMessage =
   | { type: 'opponent-joined' }
   | { type: 'error'; reason: 'room-unavailable' }
   | { type: 'opponent-left' }
-  | { type: 'start'; difficulty: Difficulty; countdownMs: number }
+  | { type: 'start'; difficulty: Difficulty }
   | { type: 'progress'; score: number; lives: number }
   | { type: 'finished'; score: number; reason: GameOverReason }
   | { type: 'rematch' };
