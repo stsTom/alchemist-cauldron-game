@@ -1,5 +1,6 @@
 import type { IGameState } from '../shared/types';
 import { continueGame, startGame } from '../logic/brew-check';
+import { createDuel, openJoin } from '../logic/lobby';
 import { loadGame } from '../storage/save';
 import { openLeaderboard, openSettings } from './dialogs';
 import { CONTROL_ICONS, setIconButton } from './icons';
@@ -14,6 +15,16 @@ startButton.classList.add('start-button');
 startButton.textContent = 'Start Game';
 startButton.addEventListener('click', startGame);
 
+export const createDuelButton = document.createElement('button');
+createDuelButton.classList.add('start-button');
+createDuelButton.textContent = 'Create Duel';
+createDuelButton.addEventListener('click', createDuel);
+
+export const joinDuelButton = document.createElement('button');
+joinDuelButton.classList.add('start-button');
+joinDuelButton.textContent = 'Join Duel';
+joinDuelButton.addEventListener('click', openJoin);
+
 export const leaderboardButton = document.createElement('button');
 leaderboardButton.classList.add('leaderboard-button');
 leaderboardButton.textContent = 'Leaderboard';
@@ -26,6 +37,8 @@ settingsButton.addEventListener('click', openSettings);
 
 export function renderStartButton({ status }: IGameState) {
   startButton.hidden = status !== 'menu';
+  createDuelButton.hidden = status !== 'menu';
+  joinDuelButton.hidden = status !== 'menu';
   leaderboardButton.hidden = status !== 'menu';
   settingsButton.hidden = status !== 'menu';
   continueButton.hidden = status !== 'menu' || loadGame() === null;

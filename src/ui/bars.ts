@@ -117,8 +117,8 @@ pauseButton.classList.add('pause-button');
 setIconButton(pauseButton, CONTROL_ICONS.pause, 'Pause');
 pauseButton.addEventListener('click', pauseGame);
 
-export function renderPauseButton({ status }: IGameState) {
-  pauseButton.hidden = status !== 'playing';
+export function renderPauseButton({ status, mode }: IGameState) {
+  pauseButton.hidden = status !== 'playing' || mode === 'duel';
 }
 
 export const healthUi = document.createElement('div');

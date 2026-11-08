@@ -44,11 +44,15 @@ import {
 } from './ui/dialogs';
 import {
   continueButton,
+  createDuelButton,
+  joinDuelButton,
   leaderboardButton,
   renderStartButton,
   settingsButton,
   startButton,
 } from './ui/menu';
+import { lobbyUi, noticeUi, renderDuelNotice, renderLobby } from './ui/lobby';
+import { opponentUi, renderDuelResult, renderOpponent, resultUi } from './ui/duel';
 
 const gamePage = document.querySelector('main');
 
@@ -62,7 +66,7 @@ gameTitle.textContent = "Alchemist's Cauldron";
 
 const headerCenter = document.createElement('div');
 headerCenter.classList.add('header-center');
-headerCenter.append(timerUi, gameTitle);
+headerCenter.append(timerUi, gameTitle, opponentUi);
 
 const header = document.createElement('header');
 header.classList.add('game-header');
@@ -82,7 +86,7 @@ recipeArea.append(recipeSeciton);
 
 const footerCenter = document.createElement('div');
 footerCenter.classList.add('footer-center');
-footerCenter.append(brewButton, startButton, continueButton);
+footerCenter.append(brewButton, startButton, continueButton, createDuelButton, joinDuelButton);
 
 const footer = document.createElement('footer');
 footer.classList.add('game-footer');
@@ -92,12 +96,21 @@ const playField = document.createElement('div');
 playField.classList.add('play-field');
 playField.append(header, shelfArea, stage, recipeArea, measurementsSection, footer);
 
-function renderPlayField({ status, isHelpOpen, isLeaderboardOpen, isSettingsOpen }: IGameState) {
+function renderPlayField({
+  status,
+  isHelpOpen,
+  isLeaderboardOpen,
+  isSettingsOpen,
+  duel,
+  duelNotice,
+}: IGameState) {
   const isPaused =
     status === 'paused' ||
     Boolean(isHelpOpen) ||
     Boolean(isLeaderboardOpen) ||
-    Boolean(isSettingsOpen);
+    Boolean(isSettingsOpen) ||
+    (duel !== null && duel.phase !== 'playing') ||
+    Boolean(duelNotice);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
 }
@@ -122,10 +135,15 @@ function render(state: IGameState) {
   renderLeaderboard(state);
   renderClearConfirm(state);
   renderSettings(state);
+  renderLobby(state);
+  renderDuelNotice(state);
+  renderOpponent(state);
+  renderDuelResult(state);
 }
 
 gameState.subscribe(render);
 gameState.subscribe((state) => {
+  if (state.mode === 'duel') return;
   if (state.status === 'playing' || state.status === 'paused') saveGame(state);
   if (state.status === 'game-over') clearSave();
 });
@@ -141,6 +159,9 @@ if (gamePage) {
     leaderboardUi,
     clearConfirmUi,
     settingsUi,
+    lobbyUi,
+    noticeUi,
+    resultUi,
   );
 }
 
