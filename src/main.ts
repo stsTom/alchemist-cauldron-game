@@ -44,11 +44,14 @@ import {
 } from './ui/dialogs';
 import {
   continueButton,
+  createDuelButton,
+  joinDuelButton,
   leaderboardButton,
   renderStartButton,
   settingsButton,
   startButton,
 } from './ui/menu';
+import { lobbyUi, noticeUi, renderDuelNotice, renderLobby } from './ui/lobby';
 
 const gamePage = document.querySelector('main');
 
@@ -82,7 +85,7 @@ recipeArea.append(recipeSeciton);
 
 const footerCenter = document.createElement('div');
 footerCenter.classList.add('footer-center');
-footerCenter.append(brewButton, startButton, continueButton);
+footerCenter.append(brewButton, startButton, continueButton, createDuelButton, joinDuelButton);
 
 const footer = document.createElement('footer');
 footer.classList.add('game-footer');
@@ -92,12 +95,21 @@ const playField = document.createElement('div');
 playField.classList.add('play-field');
 playField.append(header, shelfArea, stage, recipeArea, measurementsSection, footer);
 
-function renderPlayField({ status, isHelpOpen, isLeaderboardOpen, isSettingsOpen }: IGameState) {
+function renderPlayField({
+  status,
+  isHelpOpen,
+  isLeaderboardOpen,
+  isSettingsOpen,
+  duel,
+  duelNotice,
+}: IGameState) {
   const isPaused =
     status === 'paused' ||
     Boolean(isHelpOpen) ||
     Boolean(isLeaderboardOpen) ||
-    Boolean(isSettingsOpen);
+    Boolean(isSettingsOpen) ||
+    duel !== null ||
+    Boolean(duelNotice);
   playField.classList.toggle('paused', isPaused);
   playField.inert = isPaused;
 }
@@ -122,6 +134,8 @@ function render(state: IGameState) {
   renderLeaderboard(state);
   renderClearConfirm(state);
   renderSettings(state);
+  renderLobby(state);
+  renderDuelNotice(state);
 }
 
 gameState.subscribe(render);
@@ -141,6 +155,8 @@ if (gamePage) {
     leaderboardUi,
     clearConfirmUi,
     settingsUi,
+    lobbyUi,
+    noticeUi,
   );
 }
 

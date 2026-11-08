@@ -23,6 +23,8 @@ export function createMenuState(difficulty: Difficulty = DEFAULT_DIFFICULTY): IG
     isSettingsOpen: false,
     difficulty,
     reactionIds: [],
+    mode: 'solo',
+    duel: null,
   };
 }
 

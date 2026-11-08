@@ -35,7 +35,7 @@ const RULES_STEPS = [
 const RULES_NOTE =
   'Every ingredient has a limited stock. The number on the shelf card shows how many portions are left';
 
-function createDialog(className: string, title: string) {
+export function createDialog(className: string, title: string) {
   const root = document.createElement('section');
   root.classList.add('dialog', className);
   root.hidden = true;
@@ -54,7 +54,7 @@ function createDialog(className: string, title: string) {
   return { root, body };
 }
 
-function createDialogButton(label: string, onClick: () => void) {
+export function createDialogButton(label: string, onClick: () => void) {
   const button = document.createElement('button');
   button.textContent = label;
   button.addEventListener('click', onClick);

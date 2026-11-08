@@ -1,6 +1,16 @@
 export type Difficulty = 'easy' | 'medium' | 'hard'; // Level 2+
 export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
 export type GameOverReason = 'time-up' | 'no-lives' | 'out-of-ingredients';
+export type GameMode = 'solo' | 'duel';
+export type DuelRole = 'host' | 'guest';
+export type DuelPhase = 'code-input' | 'connecting' | 'waiting' | 'joining' | 'ready';
+
+export interface IDuelState {
+  role: DuelRole;
+  code: string;
+  phase: DuelPhase;
+  error?: string | null;
+}
 
 export interface IIngredient {
   id: string;
@@ -42,6 +52,9 @@ export interface IGameState {
   difficulty: Difficulty;
   reactionIds: string[]; // enabled for the current round
   lastReactionId?: string | null; // Level 3+
+  mode: GameMode;
+  duel: IDuelState | null;
+  duelNotice?: string | null;
 }
 
 export type ISavedGame = Pick<
