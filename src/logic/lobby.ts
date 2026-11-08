@@ -6,7 +6,7 @@ const CONNECT_TIMEOUT_MS = 60_000;
 const CONNECT_ERROR = 'Could not connect to the server';
 
 let unsubscribers: (() => void)[] = [];
-let attempt = 0;
+let pending: object | null = null;
 
 function setDuel(patch: Partial<IDuelState>) {
   const { duel } = gameState.get();
@@ -14,8 +14,8 @@ function setDuel(patch: Partial<IDuelState>) {
 }
 
 async function connectWithTimeout(): Promise<boolean> {
-  attempt += 1;
-  const current = attempt;
+  const token = {};
+  pending = token;
   let timer = 0;
   try {
     await Promise.race([
@@ -25,16 +25,15 @@ async function connectWithTimeout(): Promise<boolean> {
       }),
     ]);
   } catch (error) {
-    if (current !== attempt) return false;
+    if (pending !== token) return false;
+    pending = null;
     disconnect();
     throw error;
   } finally {
     clearTimeout(timer);
   }
-  if (current !== attempt || gameState.get().duel === null) {
-    if (current === attempt) disconnect();
-    return false;
-  }
+  if (pending !== token) return false;
+  pending = null;
   return true;
 }
 
@@ -74,7 +73,7 @@ function handleMessage(msg: DuelMessage) {
 }
 
 function endDuel(notice: string | null) {
-  attempt += 1;
+  pending = null;
   stopListening();
   disconnect();
   gameState.set({ mode: 'solo', duel: null, duelNotice: notice });
